@@ -1,0 +1,26 @@
+{% extends 'common/index.pebble' %}
+
+{% block head %}
+    <link rel="stylesheet" href="/css/login.css">
+{% endblock %}
+
+{% block body %}
+    <div class="center root">
+        <form method="post" action="/login">
+            <div class="center">Добро пожаловать!</div>
+            <br>
+            <div>
+                <label>Имя</label>
+                <input name="login" type="text" required>
+            </div>
+            <div>
+                <label>Пароль</label>
+                <input name="password" type="password" required>
+            </div>
+            <div style="min-height:50px;"></div>
+            <div class="center">
+                <button>Вход</button>
+            </div>
+        </form>
+    </div>
+{% endblock %}
