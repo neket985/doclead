@@ -8,15 +8,9 @@
 {% block body %}
     <div class="center root">
         {% if error_msg %}
-            <h1 class="error">{{ error_msg }}</h1>
+            <h1 class="error">error_msg</h1>
         {% endif %}
-        {% if msgForConfirm %}
-            <h1 class="info">Для завершения регистрации на указанную почту было выслано письмо</h1>
-        {% endif %}
-        {% if emailConfirm %}
-            <h1 class="info">Аккаунт успешно подтвержден</h1>
-        {% endif %}
-        <form method="post" action="/login" enctype="multipart/form-data">
+        <form method="post" action="/register" enctype="multipart/form-data">
             <div class="center">Добро пожаловать!</div>
             <br>
             <div>
@@ -27,10 +21,14 @@
                 <label>Пароль</label>
                 <input name="password" type="password" required>
             </div>
+            <div>
+                <label>Пароль повторно</label>
+                <input name="password_confirm" type="password" required>
+            </div>
             <br>
-            <div class="center link register">Зарегистрироваться</div>
+            <div class="center link login">Уже есть аккаунт?</div>
             <div class="center">
-                <button>Вход</button>
+                <button>Регистрация</button>
             </div>
         </form>
     </div>

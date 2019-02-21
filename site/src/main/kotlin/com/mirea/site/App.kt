@@ -39,7 +39,7 @@ object App {
         install(Authentication) {
             form {
                 passwordParamName = "password"
-                userParamName = "login"
+                userParamName = "email"
                 challenge = FormAuthChallenge.Redirect { "/login" }
 
                 skipWhen {
@@ -53,7 +53,7 @@ object App {
                     } ?: false
                 }
                 validate { creds ->
-                    userDao.getByUsername(creds.name)?.let { user ->
+                    userDao.getConfirmedByEmail(creds.name)?.let { user ->
                         if (BCrypt.checkpw(creds.password, user.password)) {
                             val jwt = JwtCommon.genJWT(user.toPrincipal())
                             sessions.set(JwtSession(jwt))
@@ -76,6 +76,7 @@ object App {
             }
 
             route("login", LoginController.login)
+            route("register", LoginController.register)
 
             authenticate {
                 get("") {

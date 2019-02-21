@@ -26,6 +26,7 @@ object PebbleModule {
             PebbleEngine.Builder()
                     .autoEscaping(autoEscaping)
                     .loader(loader)
+                    .cacheActive(false)
                     .newLineTrimming(true)
                     .build()!!
         }
