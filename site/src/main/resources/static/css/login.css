@@ -14,7 +14,7 @@ input {
     margin-bottom: 3px;
 }
 
-label{
+label {
     min-width: 50px;
     margin-right: 5px;
 }
@@ -29,4 +29,24 @@ form {
     padding: 10px;
     border: 1px black solid;
     border-radius: 10px;
+}
+
+.link {
+    color: #0056b3;
+    font-size: 12px;
+}
+
+.link:hover {
+    color: #0056b3;
+    text-decoration: underline;
+}
+
+.error{
+    color: red;
+    font-weight: bold;
+}
+
+.info {;
+    color: rgba(0, 0, 217, 0.86);
+    font-weight: bold;
 }
