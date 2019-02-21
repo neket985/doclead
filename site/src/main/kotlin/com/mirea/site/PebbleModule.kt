@@ -1,4 +1,4 @@
-package com.mirea.doclead
+package com.mirea.site
 
 import com.mitchellbosecke.pebble.PebbleEngine
 import com.mitchellbosecke.pebble.loader.Loader

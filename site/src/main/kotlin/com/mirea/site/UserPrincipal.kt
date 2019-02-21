@@ -1,4 +1,4 @@
-package com.mirea.doclead
+package com.mirea.site
 
 import io.ktor.auth.Principal
 

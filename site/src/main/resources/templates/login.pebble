@@ -6,7 +6,7 @@
 
 {% block body %}
     <div class="center root">
-        <form method="post" action="/login">
+        <form method="post" action="/login" enctype="multipart/form-data">
             <div class="center">Добро пожаловать!</div>
             <br>
             <div>

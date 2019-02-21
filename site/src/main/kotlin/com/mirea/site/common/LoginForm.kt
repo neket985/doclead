@@ -1,4 +1,4 @@
-package com.mirea.doclead.common
+package com.mirea.site.common
 
 data class LoginForm(
         val login: String,
