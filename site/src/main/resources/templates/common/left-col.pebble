@@ -1,0 +1,15 @@
+{% extends 'common/index.pebble' %}
+
+{% block head %}
+    <link rel="stylesheet" href="/css/left-col.css">
+    {% block col_head %}{% endblock %}
+{% endblock %}
+
+{% block body %}
+    <div class="left-col">
+        Hello!
+    </div>
+    <div class="col-body">
+        {% block col_body %}{% endblock %}
+    </div>
+{% endblock %}

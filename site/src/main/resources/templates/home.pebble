@@ -1,11 +1,13 @@
-{% extends 'common/index.pebble' %}
+{% extends 'common/left-col.pebble' %}
 
-{% block head %}
-    <link rel="stylesheet" href="/css/login.css">
+{% block col_head %}
+    <link rel="stylesheet" href="/css/home.css">
 {% endblock %}
 
-{% block body %}
+{% block col_body %}
     <div class="root">
-        Hello!
+        <h1 class="center">Мои проекты</h1>
+        {% if items is empty %}
+        <div>Hello!</div>
     </div>
 {% endblock %}

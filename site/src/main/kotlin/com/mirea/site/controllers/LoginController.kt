@@ -2,7 +2,7 @@ package com.mirea.site.controllers
 
 import com.mirea.mongo.dao.UserDao
 import com.mirea.mongo.entity.User
-import com.mirea.site.UserPrincipal
+import com.mirea.common.UserPrincipal
 import com.mirea.site.common.EmailSender
 import com.mirea.site.common.SiteURLS
 import com.mirea.site.common.kodein
@@ -19,6 +19,7 @@ import org.litote.kmongo.and
 import org.litote.kmongo.eq
 import org.litote.kmongo.set
 import org.mindrot.jbcrypt.BCrypt
+import java.time.Instant
 import java.util.*
 
 object LoginController {
@@ -64,7 +65,7 @@ object LoginController {
             } else {
                 val hashPW = BCrypt.hashpw(password, BCrypt.gensalt())
                 val uuidForConfirm = UUID.randomUUID().toString()
-                val toInsert = User(email, hashPW, false, uuidForConfirm)
+                val toInsert = User(email, hashPW, false, uuidForConfirm, Instant.now())
                 userDao.insert(toInsert)
 
                 EmailSender.send(
@@ -73,7 +74,7 @@ object LoginController {
                         registrationText + confirmLink(uuidForConfirm)
                 )
 
-                context.respondRedirect(SiteURLS.loginUrl(msgForConfirm=true))
+                context.respondRedirect(SiteURLS.loginUrl(msgForConfirm = true))
             }
         }
 
@@ -81,7 +82,7 @@ object LoginController {
             val uuid = context.parameters["uuid"]!!
             userDao.updateOne(and(User::confirmed eq false, User::confirmUid eq uuid), set(User::confirmed, true))
 
-            context.respondRedirect(SiteURLS.loginUrl(emailConfirm=true))
+            context.respondRedirect(SiteURLS.loginUrl(emailConfirm = true))
         }
     }
 

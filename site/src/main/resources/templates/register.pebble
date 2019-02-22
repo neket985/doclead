@@ -6,11 +6,11 @@
 {% endblock %}
 
 {% block body %}
-        {% if error_msg %}
-            <div class="center error">{{ error_msg }}</div>
-        {% endif %}
+    {% if error_msg %}
+        <div class="center error">{{ error_msg }}</div>
+    {% endif %}
     <div class="center root">
-        <form method="post" action="/register" enctype="multipart/form-data">
+        <form method="post" action="{{ URLS.registrationUrl() }}" enctype="multipart/form-data">
             <div class="center">Добро пожаловать!</div>
             <br>
             <table>
@@ -33,7 +33,7 @@
             </table>
 
             <br>
-            <div class="center link login">Уже есть аккаунт? Войти!</div>
+            <div class="center link" onclick="redirect('{{ URLS.loginUrl() }}')">Уже есть аккаунт? Войти!</div>
             <div class="center">
                 <button>Регистрация</button>
             </div>

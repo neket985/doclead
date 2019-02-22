@@ -1,5 +1,7 @@
 package com.mirea.mongo
 
+import com.mirea.mongo.dao.DocumentDao
+import com.mirea.mongo.dao.ProjectDao
 import com.mirea.mongo.dao.UserDao
 import com.mongodb.MongoClient
 import com.mongodb.MongoCredential
@@ -30,5 +32,7 @@ object MongoModule {
         bind<MongoDatabase>() with singleton { database }
 
         bind<UserDao>() with singleton { UserDao(instance()) }
+        bind<DocumentDao>() with singleton { DocumentDao(instance()) }
+        bind<ProjectDao>() with singleton { ProjectDao(instance()) }
     }
 }

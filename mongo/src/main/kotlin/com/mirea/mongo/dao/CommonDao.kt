@@ -1,11 +1,14 @@
 package com.mirea.mongo.dao
 
+import com.mirea.mongo.Page
+import com.mirea.mongo.Pageable
 import com.mirea.mongo.entity.Persistent
 import com.mongodb.client.MongoDatabase
 import com.mongodb.client.model.InsertManyOptions
 import com.mongodb.client.model.InsertOneOptions
 import org.bson.conversions.Bson
 import org.bson.types.ObjectId
+import org.litote.kmongo.EMPTY_BSON
 import org.litote.kmongo.eq
 import org.litote.kmongo.find
 import org.litote.kmongo.findOne
@@ -31,4 +34,15 @@ abstract class CommonDao<T : Persistent>(mongoDb: MongoDatabase, clazz: KClass<T
 
     fun replaceById(id: ObjectId, obj: T) = mongoCollection.replaceOne(Persistent::_id eq id, obj)
     fun replaceOne(filter: Bson, obj: T) = mongoCollection.replaceOne(filter, obj)
+
+    fun page(page: Page, filter: Bson = EMPTY_BSON): Pageable<T> {
+        val total = mongoCollection.countDocuments(filter)
+        val content = mongoCollection.find(filter)
+                .sort(page.order)
+                .skip(page.page * page.size)
+                .limit(page.size)
+                .toList()
+
+        return Pageable(page, total, content)
+    }
 }

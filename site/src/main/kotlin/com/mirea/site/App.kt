@@ -1,17 +1,15 @@
 package com.mirea.site
 
-import com.auth0.jwt.exceptions.JWTVerificationException
-import com.mirea.mongo.dao.UserDao
-import com.mirea.site.common.*
+import com.mirea.common.JwtSession
+import com.mirea.site.common.SiteURLS
 import com.mirea.site.controllers.AuthConfigure
 import com.mirea.site.controllers.LoginController
+import com.mirea.site.controllers.ProjectController
 import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.application.install
 import io.ktor.auth.Authentication
-import io.ktor.auth.FormAuthChallenge
 import io.ktor.auth.authenticate
-import io.ktor.auth.form
 import io.ktor.features.StatusPages
 import io.ktor.http.CookieEncoding
 import io.ktor.http.HttpStatusCode
@@ -19,12 +17,10 @@ import io.ktor.http.content.files
 import io.ktor.http.content.static
 import io.ktor.response.respond
 import io.ktor.response.respondRedirect
-import io.ktor.routing.get
 import io.ktor.routing.route
 import io.ktor.routing.routing
-import io.ktor.sessions.*
-import org.kodein.di.generic.instance
-import org.mindrot.jbcrypt.BCrypt
+import io.ktor.sessions.Sessions
+import io.ktor.sessions.cookie
 import javax.naming.AuthenticationException
 
 object App {
@@ -51,8 +47,9 @@ object App {
             route("register", LoginController.register)
 
             authenticate {
-                get("") {
-                    context.render("home")
+                route("", ProjectController.home)
+                route("project") {
+                    route("add", ProjectController.projectAdd)
                 }
             }
         }

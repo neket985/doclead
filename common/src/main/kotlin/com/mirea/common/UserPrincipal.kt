@@ -1,4 +1,4 @@
-package com.mirea.site
+package com.mirea.common
 
 import io.ktor.auth.Principal
 

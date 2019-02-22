@@ -2,7 +2,7 @@ package com.mirea.site.common
 
 import com.mirea.mongo.entity.User
 import com.mirea.site.PebbleModule.render
-import com.mirea.site.UserPrincipal
+import com.mirea.common.UserPrincipal
 import com.mitchellbosecke.pebble.PebbleEngine
 import io.ktor.application.ApplicationCall
 import io.ktor.http.ContentType
@@ -25,7 +25,3 @@ suspend fun ApplicationCall.render(template: String, vararg params: Pair<String,
 
             engine.render(template, *allParams)
         }
-
-fun User.toPrincipal() = UserPrincipal(this.email)
-
-data class JwtSession(val jwt: String)

@@ -6,8 +6,8 @@
 {% endblock %}
 
 {% block body %}
-    {% if error_msg %}
-        <div class="center error">{{ error_msg }}</div>
+    {% if loginError %}
+        <div class="center error">Логин или пароль введены неверно</div>
     {% endif %}
     {% if msgForConfirm %}
         <div class="center info">Для завершения регистрации на указанную почту было выслано письмо</div>
@@ -16,7 +16,7 @@
         <div class="center info">Аккаунт успешно подтвержден</div>
     {% endif %}
     <div class="center root">
-        <form method="post" action="/login" enctype="multipart/form-data">
+        <form method="post" action="{{ URLS.loginUrl() }}" enctype="multipart/form-data">
             <div class="center">Добро пожаловать!</div>
             <br>
             <table>
@@ -34,7 +34,9 @@
                 </tr>
             </table>
             <br>
-            <div class="center link register">Впервые на сайте? Зарегистрироваться!</div>
+            <div class="center link" onclick="redirect('{{ URLS.registrationUrl() }}')">Впервые на сайте?
+                Зарегистрироваться!
+            </div>
             <div class="center">
                 <button>Вход</button>
             </div>

@@ -1,0 +1,12 @@
+.left-col {
+    min-height: 100vh;
+    min-width: 100px;
+    position: fixed;
+    background-color: black;
+    color: white;
+}
+
+.col-body {
+    padding-left: 110px;
+    width: 100vw;
+}

@@ -11,6 +11,8 @@
     <modules>
         <module>site</module>
         <module>mongo</module>
+        <module>api</module>
+        <module>common</module>
     </modules>
 
     <properties>

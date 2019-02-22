@@ -1,0 +1,9 @@
+.root {
+    font-size: 14px;
+}
+
+.center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

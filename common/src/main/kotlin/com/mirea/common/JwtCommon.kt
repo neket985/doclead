@@ -1,9 +1,8 @@
-package com.mirea.site.common
+package com.mirea.common
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import com.auth0.jwt.interfaces.Payload
-import com.mirea.site.UserPrincipal
 import com.typesafe.config.ConfigFactory
 import org.slf4j.LoggerFactory
 import java.time.Instant

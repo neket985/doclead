@@ -1,12 +1,16 @@
 package com.mirea.site.controllers
 
 import com.auth0.jwt.exceptions.JWTVerificationException
+import com.mirea.common.JwtCommon
+import com.mirea.common.JwtSession
+import com.mirea.common.toPrincipal
 import com.mirea.mongo.dao.UserDao
-import com.mirea.site.App
-import com.mirea.site.common.*
+import com.mirea.site.common.SiteURLS
+import com.mirea.site.common.kodein
 import io.ktor.auth.Authentication
 import io.ktor.auth.FormAuthChallenge
 import io.ktor.auth.form
+import io.ktor.request.uri
 import io.ktor.sessions.get
 import io.ktor.sessions.sessions
 import io.ktor.sessions.set
@@ -20,7 +24,10 @@ object AuthConfigure {
         form {
             passwordParamName = "password"
             userParamName = "email"
-            challenge = FormAuthChallenge.Redirect { SiteURLS.loginUrl() }
+            challenge = FormAuthChallenge.Redirect {
+                if (this.request.uri == SiteURLS.loginUrl()) SiteURLS.loginUrl(loginError = true)
+                else SiteURLS.loginUrl()
+            }
 
             skipWhen {
                 it.sessions.get<JwtSession>()?.let {
