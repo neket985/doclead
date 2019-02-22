@@ -6,15 +6,15 @@
 {% endblock %}
 
 {% block body %}
-        {% if error_msg %}
-            <div class="center error">{{ error_msg }}</div>
-        {% endif %}
-        {% if msgForConfirm %}
-            <div class="center info">Для завершения регистрации на указанную почту было выслано письмо</div>
-        {% endif %}
-        {% if emailConfirm %}
-            <div class="center info">Аккаунт успешно подтвержден</div>
-        {% endif %}
+    {% if error_msg %}
+        <div class="center error">{{ error_msg }}</div>
+    {% endif %}
+    {% if msgForConfirm %}
+        <div class="center info">Для завершения регистрации на указанную почту было выслано письмо</div>
+    {% endif %}
+    {% if emailConfirm %}
+        <div class="center info">Аккаунт успешно подтвержден</div>
+    {% endif %}
     <div class="center root">
         <form method="post" action="/login" enctype="multipart/form-data">
             <div class="center">Добро пожаловать!</div>

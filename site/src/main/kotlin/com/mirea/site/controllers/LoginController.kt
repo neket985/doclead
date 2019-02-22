@@ -4,6 +4,7 @@ import com.mirea.mongo.dao.UserDao
 import com.mirea.mongo.entity.User
 import com.mirea.site.UserPrincipal
 import com.mirea.site.common.EmailSender
+import com.mirea.site.common.SiteURLS
 import com.mirea.site.common.kodein
 import com.mirea.site.common.render
 import io.ktor.auth.authenticate
@@ -21,20 +22,19 @@ import org.mindrot.jbcrypt.BCrypt
 import java.util.*
 
 object LoginController {
-
     private val userDao by kodein.instance<UserDao>()
 
     val login: Route.() -> Unit = {
         get("") {
             if (context.principal<UserPrincipal>() != null) {
-                context.respondRedirect("/")
+                context.respondRedirect(SiteURLS.homeUrl())
             } else {
                 context.render("login")
             }
         }
         authenticate {
             post("") {
-                context.respondRedirect("/")
+                context.respondRedirect(SiteURLS.homeUrl())
             }
         }
     }
@@ -42,7 +42,7 @@ object LoginController {
     val register: Route.() -> Unit = {
         get("") {
             if (context.principal<UserPrincipal>() != null) {
-                context.respondRedirect("/")
+                context.respondRedirect(SiteURLS.homeUrl())
             } else {
                 context.render("register")
             }
@@ -67,9 +67,13 @@ object LoginController {
                 val toInsert = User(email, hashPW, false, uuidForConfirm)
                 userDao.insert(toInsert)
 
-                EmailSender.send(email, registrationTitle, registrationText + confirmLink + uuidForConfirm)
+                EmailSender.send(
+                        email,
+                        registrationTitle,
+                        registrationText + confirmLink(uuidForConfirm)
+                )
 
-                context.respondRedirect("/login?msgForConfirm=true")
+                context.respondRedirect(SiteURLS.loginUrl(msgForConfirm=true))
             }
         }
 
@@ -77,11 +81,11 @@ object LoginController {
             val uuid = context.parameters["uuid"]!!
             userDao.updateOne(and(User::confirmed eq false, User::confirmUid eq uuid), set(User::confirmed, true))
 
-            context.respondRedirect("/login?emailConfirm=true")
+            context.respondRedirect(SiteURLS.loginUrl(emailConfirm=true))
         }
     }
 
-    private val registrationTitle = "Завершение регистрации"
-    private val registrationText = "Для завершения регистрации перейдите по ссылке "
-    private val confirmLink = "http://0.0.0.0:8080/register/confirm/"
+    private const val registrationTitle = "Завершение регистрации"
+    private const val registrationText = "Для завершения регистрации перейдите по ссылке "
+    private fun confirmLink(uuid: String) = "http://0.0.0.0:8080${SiteURLS.confirmEmailUrl(uuid)}"
 }

@@ -18,7 +18,10 @@ suspend fun ApplicationCall.render(template: String, vararg params: Pair<String,
             val queryParams = this.request.queryParameters.toMap().map {
                 it.key to it.value.firstOrNull()
             }
-            val allParams = queryParams.plus(params).toTypedArray()
+            val allParams = queryParams
+                    .plus(params)
+                    .plus("URLS" to SiteURLS)
+                    .toTypedArray()
 
             engine.render(template, *allParams)
         }

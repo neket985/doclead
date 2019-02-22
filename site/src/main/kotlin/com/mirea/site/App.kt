@@ -3,6 +3,7 @@ package com.mirea.site
 import com.auth0.jwt.exceptions.JWTVerificationException
 import com.mirea.mongo.dao.UserDao
 import com.mirea.site.common.*
+import com.mirea.site.controllers.AuthConfigure
 import com.mirea.site.controllers.LoginController
 import io.ktor.application.Application
 import io.ktor.application.call
@@ -27,7 +28,6 @@ import org.mindrot.jbcrypt.BCrypt
 import javax.naming.AuthenticationException
 
 object App {
-    private val userDao by kodein.instance<UserDao>()
     fun Application.main() {
         install(Sessions) {
             cookie<JwtSession>("USER_JWT_SESSION") {
@@ -36,35 +36,7 @@ object App {
             }
         }
 
-        install(Authentication) {
-            form {
-                passwordParamName = "password"
-                userParamName = "email"
-                challenge = FormAuthChallenge.Redirect { "/login" }
-
-                skipWhen {
-                    it.sessions.get<JwtSession>()?.let {
-                        try {
-                            JwtCommon.verifier.verify(it.jwt)
-                            true
-                        } catch (e: JWTVerificationException) {
-                            false
-                        }
-                    } ?: false
-                }
-                validate { creds ->
-                    userDao.getConfirmedByEmail(creds.name)?.let { user ->
-                        if (BCrypt.checkpw(creds.password, user.password)) {
-                            val jwt = JwtCommon.genJWT(user.toPrincipal())
-                            sessions.set(JwtSession(jwt))
-                            user.toPrincipal()
-                        } else {
-                            null
-                        }
-                    }
-                }
-            }
-        }
+        install(Authentication, AuthConfigure.configure)
 
         val staticDir = environment.config.property("template.staticDir").getString()
         routing {
@@ -89,7 +61,7 @@ object App {
                 call.respond(HttpStatusCode.Unauthorized)
             }
             status(HttpStatusCode.Unauthorized) {
-                context.respondRedirect("/login")
+                context.respondRedirect(SiteURLS.loginUrl())
             }
 //            exception<AuthorizationException> { cause ->
 //                call.respond(HttpStatusCode.Forbidden)

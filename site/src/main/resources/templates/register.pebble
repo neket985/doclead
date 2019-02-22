@@ -7,7 +7,7 @@
 
 {% block body %}
         {% if error_msg %}
-            <div class="center error">error_msg</div>
+            <div class="center error">{{ error_msg }}</div>
         {% endif %}
     <div class="center root">
         <form method="post" action="/register" enctype="multipart/form-data">
