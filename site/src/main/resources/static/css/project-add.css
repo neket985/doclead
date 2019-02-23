@@ -1,0 +1,25 @@
+textarea {
+    border-color: #dfdfdf;
+    min-width: 350px;
+}
+
+input {
+    min-width: 350px;
+}
+
+input, label {
+    display: block;
+}
+
+.label-line {
+    display: flex;
+}
+
+label.inactive {
+    color: rgba(0, 0, 0, 0.3);
+}
+
+form {
+    margin-left: 20px;
+    margin-top: 20px;
+}

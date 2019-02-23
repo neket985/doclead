@@ -1,4 +1,4 @@
-package com.mirea.site.common
+package com.mirea.common
 
 data class WebError(val code: Int, val desc: String, val template: Pair<String, Map<String, Any?>>?) : Throwable() {
     companion object {

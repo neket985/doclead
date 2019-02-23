@@ -1,0 +1,35 @@
+{% extends 'common/left-col.pebble' %}
+
+{% block col_head %}
+    <link rel="stylesheet" href="/css/document-add.css">
+    <script src="/js/document-add.js"></script>
+{% endblock %}
+
+{% block left_icons %}
+    <a class="center" href="{{ URLS.projectDetailUrl(project) }}"><img class="icon" src="/img/project_icon.png"></a>
+{% endblock %}
+
+{% block col_title %}Добавление документа{% endblock %}
+
+{% block col_body %}
+    <div class="root">
+        <form action="{{ URLS.documentAddUrl(project) }}" method="post" enctype="multipart/form-data"
+              id="document_form">
+            <label>Описание</label>
+            <textarea name="description" form="document_form" placeholder="Ваше описание"></textarea>
+            <label>Версия</label>
+            <input name="version" value="{{ lastVersion }}">
+            <div class="label-line">
+                <label class="label-for-unchecked">Документ Swagger</label>
+                <label class="switch">
+                    <input type="checkbox" id="doc-toggle" name="doc-toggle">
+                    <span class="slider round"></span>
+                </label>
+                <label class="label-for-checked inactive">Коллекция Postman</label>
+            </div>
+            <input name="file" type="file">
+            <br>
+            <button type="submit">Отправить</button>
+        </form>
+    </div>
+{% endblock %}

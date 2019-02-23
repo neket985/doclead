@@ -3,6 +3,7 @@ package com.mirea.site
 import com.mirea.common.JwtSession
 import com.mirea.site.common.SiteURLS
 import com.mirea.site.controllers.AuthConfigure
+import com.mirea.site.controllers.DocumentController
 import com.mirea.site.controllers.LoginController
 import com.mirea.site.controllers.ProjectController
 import io.ktor.application.Application
@@ -42,6 +43,9 @@ object App {
             static("js") {
                 files("$staticDir/js")
             }
+            static("img") {
+                files("$staticDir/img")
+            }
 
             route("login", LoginController.login)
             route("register", LoginController.register)
@@ -49,6 +53,13 @@ object App {
             authenticate {
                 route("", ProjectController.home)
                 route("project") {
+                    route("{uid}") {
+                        route("", ProjectController.detail)
+                        route("document") {
+                            route("", DocumentController.detail)
+                            route("add", DocumentController.documentAdd)
+                        }
+                    }
                     route("add", ProjectController.projectAdd)
                 }
             }

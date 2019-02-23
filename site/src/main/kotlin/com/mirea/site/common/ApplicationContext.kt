@@ -1,6 +1,6 @@
 package com.mirea.site.common
 
-import com.mirea.site.PebbleModule
+import com.mirea.site.pebble.PebbleModule
 import com.mirea.mongo.MongoModule
 import org.kodein.di.Kodein
 

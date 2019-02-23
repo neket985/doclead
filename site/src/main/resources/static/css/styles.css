@@ -1,0 +1,34 @@
+.center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+input {
+    width: 200px;
+    margin-bottom: 3px;
+}
+
+label {
+    margin-right: 5px;
+}
+
+.link {
+    color: #0056b3;
+    font-size: 12px;
+}
+
+.link:hover {
+    color: #0056b3;
+    text-decoration: underline;
+}
+
+.error {
+    color: red;
+    font-weight: bold;
+}
+
+.info {;
+    color: rgba(0, 0, 217, 0.86);
+    font-weight: bold;
+}

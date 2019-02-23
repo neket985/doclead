@@ -2,8 +2,10 @@ package com.mirea.common
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
+import com.auth0.jwt.interfaces.Claim
 import com.auth0.jwt.interfaces.Payload
 import com.typesafe.config.ConfigFactory
+import org.bson.types.ObjectId
 import org.slf4j.LoggerFactory
 import java.time.Instant
 import java.util.*
@@ -21,6 +23,7 @@ object JwtCommon {
         return JWT.create()
                 .withIssuer(issuer)
                 .withClaim("name", user.name)
+                .withClaim("id", user.id.toHexString())
                 .withExpiresAt(Date.from(Instant.now().plusSeconds(expSecs)))
                 .sign(algorithm)
     }
@@ -30,7 +33,16 @@ object JwtCommon {
             .build()
 
     fun Payload.toPrincipal() =
-            UserPrincipal(this.getClaim("name").asString())
+            UserPrincipal(
+                    this.getClaim("name").asString(),
+                    ObjectId(this.getClaim("id").asString())
+            )
+
+    fun Map<String, Claim>.toPrincipal() =
+            UserPrincipal(
+                    this["name"]!!.asString(),
+                    ObjectId(this["id"]!!.asString())
+            )
 
     private val logger = LoggerFactory.getLogger(JwtCommon::class.java)
 }

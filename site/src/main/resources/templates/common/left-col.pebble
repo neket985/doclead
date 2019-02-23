@@ -7,9 +7,19 @@
 
 {% block body %}
     <div class="left-col">
-        Hello!
+        <div>
+            {% block left_icons %}{% endblock %}
+        </div>
+        <div class="bottom">
+            <a class="center" href="{{ URLS.projectAddUrl() }}"><img class="icon" src="/img/wheel_icon.png"></a>
+        </div>
     </div>
-    <div class="col-body">
-        {% block col_body %}{% endblock %}
+    <div>
+        <h1 class="center col-title">
+            {% block col_title %}{% endblock %}
+        </h1>
+        <div class="col-body">
+            {% block col_body %}{% endblock %}
+        </div>
     </div>
 {% endblock %}

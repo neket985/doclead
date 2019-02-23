@@ -4,10 +4,27 @@
     <link rel="stylesheet" href="/css/home.css">
 {% endblock %}
 
+{% block left_icons %}
+    <a class="center" href="{{ URLS.projectAddUrl() }}"><img class="icon" src="/img/plus_icon.png"></a>
+{% endblock %}
+
+{% block col_title %}Мои проекты{% endblock %}
+
 {% block col_body %}
-    <div class="root">
-        <h1 class="center">Мои проекты</h1>
-        {% if items is empty %}
-        <div>Hello!</div>
-    </div>
+    {% if page.content is empty %}
+        <div>У вас пока нет ни одного проекта</div>
+    {% else %}
+        {% for item in page.content %}
+            <div class="project-item" onclick="redirect('{{ URLS.projectDetailUrl(item) }}')">
+                {% if principal.id == item.creator._id %}
+                    <span class="tag">импорт</span>
+                {% endif %}
+                <h2>{{ item.title }}</h2>
+                {% if item.description != null %}
+                    <p class="project-desc">{{ item.description }}</p>
+                {% endif %}
+                <span class="date-bottom">{{ item.createdAt | datetime("dd.MM.yyyy") }}</span>
+            </div>
+        {% endfor %}
+    {% endif %}
 {% endblock %}

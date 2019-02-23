@@ -1,0 +1,19 @@
+{% extends 'common/left-col.pebble' %}
+
+{% block col_head %}
+    <link rel="stylesheet" href="/css/project-add.css">
+    <script src="/js/document-add.js"></script>
+{% endblock %}
+
+{% block left_icons %}
+    <a class="center" href="{{ URLS.homeUrl() }}"><img class="icon" src="/img/home_icon.png"></a>
+    <a class="center" href="{{ URLS.documentAddUrl(project) }}"><img class="icon" src="/img/plus_icon.png"></a>
+{% endblock %}
+
+{% block col_title %}qq{% endblock %}
+
+{% block col_body %}
+    <div class="root">
+        {{ project }}
+    </div>
+{% endblock %}

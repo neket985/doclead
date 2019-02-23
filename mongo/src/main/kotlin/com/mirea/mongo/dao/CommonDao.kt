@@ -3,6 +3,7 @@ package com.mirea.mongo.dao
 import com.mirea.mongo.Page
 import com.mirea.mongo.Pageable
 import com.mirea.mongo.entity.Persistent
+import com.mongodb.client.MongoCollection
 import com.mongodb.client.MongoDatabase
 import com.mongodb.client.model.InsertManyOptions
 import com.mongodb.client.model.InsertOneOptions
@@ -23,8 +24,8 @@ abstract class CommonDao<T : Persistent>(mongoDb: MongoDatabase, clazz: KClass<T
     fun findOne(vararg filter: Bson) = mongoCollection.findOne(*filter)
     fun find(vararg filter: Bson) = mongoCollection.find(*filter)
 
-    fun insert(obj: T) = mongoCollection.insertOne(obj)
-    fun insert(obj: T, opts: InsertOneOptions) = mongoCollection.insertOne(obj, opts)
+    fun insert(obj: T) = mongoCollection.insert(obj)
+    fun insert(obj: T, opts: InsertOneOptions) = mongoCollection.insert(obj, opts)
     fun insertMany(obj: List<T>) = mongoCollection.insertMany(obj)
     fun insertMany(obj: List<T>, opts: InsertManyOptions) = mongoCollection.insertMany(obj, opts)
 
@@ -44,5 +45,14 @@ abstract class CommonDao<T : Persistent>(mongoDb: MongoDatabase, clazz: KClass<T
                 .toList()
 
         return Pageable(page, total, content)
+    }
+
+    fun <T : Persistent> MongoCollection<T>.insert(item: T, opts: InsertOneOptions = InsertOneOptions()): T {
+        if (item._id != null) error("Insert _id must be null")
+        else {
+            val itemWithId: T = item.apply { _id = ObjectId.get() }
+            insertOne(itemWithId, opts)
+            return itemWithId
+        }
     }
 }

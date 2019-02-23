@@ -1,6 +1,7 @@
-package com.mirea.site
+package com.mirea.site.pebble
 
 import com.mitchellbosecke.pebble.PebbleEngine
+import com.mitchellbosecke.pebble.extension.AbstractExtension
 import com.mitchellbosecke.pebble.loader.Loader
 import com.typesafe.config.ConfigFactory
 import org.kodein.di.Kodein
@@ -24,6 +25,9 @@ object PebbleModule {
             }
 
             PebbleEngine.Builder()
+                    .extension(object : AbstractExtension() {
+                        override fun getFilters() = mapOf("datetime" to DateTimeFilter)
+                    })
                     .autoEscaping(autoEscaping)
                     .loader(loader)
                     .cacheActive(false)

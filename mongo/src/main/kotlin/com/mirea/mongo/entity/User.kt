@@ -1,6 +1,7 @@
 package com.mirea.mongo.entity
 
 import org.bson.types.ObjectId
+import java.nio.file.attribute.UserPrincipal
 import java.time.Instant
 
 class User(
@@ -9,7 +10,7 @@ class User(
         val confirmed: Boolean, //email confirmation
         val confirmUid: String,
         val createdAt: Instant,
-        override val _id: ObjectId? = null
+        override var _id: ObjectId? = null
 ) : Persistent{
     data class UserEmbedded(
             val email: String,

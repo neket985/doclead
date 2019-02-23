@@ -6,7 +6,32 @@
     color: white;
 }
 
+.col-title {
+    padding-left: 100px;
+    width: 100vw;
+}
+
 .col-body {
     padding-left: 110px;
     width: 100vw;
+}
+
+.icon {
+    width: 50px;
+}
+
+.center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+a.center {
+    margin: 20px 25px;
+}
+
+.bottom {
+    min-width: 100px;
+    position: fixed;
+    bottom: 0;
 }

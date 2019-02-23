@@ -2,6 +2,7 @@ package com.mirea.site.controllers
 
 import com.auth0.jwt.exceptions.JWTVerificationException
 import com.mirea.common.JwtCommon
+import com.mirea.common.JwtCommon.toPrincipal
 import com.mirea.common.JwtSession
 import com.mirea.common.toPrincipal
 import com.mirea.mongo.dao.UserDao
@@ -9,6 +10,7 @@ import com.mirea.site.common.SiteURLS
 import com.mirea.site.common.kodein
 import io.ktor.auth.Authentication
 import io.ktor.auth.FormAuthChallenge
+import io.ktor.auth.authentication
 import io.ktor.auth.form
 import io.ktor.request.uri
 import io.ktor.sessions.get
@@ -29,10 +31,11 @@ object AuthConfigure {
                 else SiteURLS.loginUrl()
             }
 
-            skipWhen {
-                it.sessions.get<JwtSession>()?.let {
+            skipWhen { call ->
+                call.sessions.get<JwtSession>()?.let {
                     try {
-                        JwtCommon.verifier.verify(it.jwt)
+                        val decoded = JwtCommon.verifier.verify(it.jwt)
+                        call.authentication.principal = decoded.claims.toPrincipal()
                         true
                     } catch (e: JWTVerificationException) {
                         false
