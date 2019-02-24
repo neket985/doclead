@@ -1,0 +1,10 @@
+<div class="project-item" onclick="redirect('{{ URLS.projectDetailUrl(item) }}')">
+    {% if principal.id != item.creator._id %}
+        <span class="tag">импорт</span>
+    {% endif %}
+    <h2>{{ item.title }}</h2>
+    {% if item.description %}
+        <p class="project-desc">{{ item.description }}</p>
+    {% endif %}
+    <span class="date-bottom">{{ item.createdAt | datetime("dd.MM.yyyy") }}</span>
+</div>

@@ -1,13 +1,20 @@
 package com.mirea.site.common
 
+import com.auth0.jwt.exceptions.JWTVerificationException
+import com.mirea.common.JwtCommon
+import com.mirea.common.JwtCommon.toPrincipal
+import com.mirea.common.JwtSession
 import com.mirea.common.UserPrincipal
 import com.mirea.site.pebble.PebbleModule.render
 import com.mitchellbosecke.pebble.PebbleEngine
 import io.ktor.application.ApplicationCall
+import io.ktor.auth.authentication
 import io.ktor.auth.principal
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.response.respondText
+import io.ktor.sessions.get
+import io.ktor.sessions.sessions
 import io.ktor.util.toMap
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -31,6 +38,17 @@ suspend fun ApplicationCall.render(template: String, vararg params: Pair<String,
                     .toTypedArray()
 
             engine.render(template, *allParams)
+        }
+
+fun ApplicationCall.getPrincipalFromSession() =
+        this.sessions.get<JwtSession>()?.let {
+            try {
+                val decoded = JwtCommon.verifier.verify(it.jwt)
+                this.authentication.principal = decoded.claims.toPrincipal()
+
+            } catch (e: JWTVerificationException) {
+                null
+            }
         }
 
 

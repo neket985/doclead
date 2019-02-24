@@ -5,8 +5,10 @@ import com.mirea.mongo.Pageable
 import com.mirea.mongo.entity.Persistent
 import com.mongodb.client.MongoCollection
 import com.mongodb.client.MongoDatabase
+import com.mongodb.client.model.FindOneAndUpdateOptions
 import com.mongodb.client.model.InsertManyOptions
 import com.mongodb.client.model.InsertOneOptions
+import com.mongodb.client.model.ReturnDocument
 import org.bson.conversions.Bson
 import org.bson.types.ObjectId
 import org.litote.kmongo.EMPTY_BSON
@@ -29,8 +31,12 @@ abstract class CommonDao<T : Persistent>(mongoDb: MongoDatabase, clazz: KClass<T
     fun insertMany(obj: List<T>) = mongoCollection.insertMany(obj)
     fun insertMany(obj: List<T>, opts: InsertManyOptions) = mongoCollection.insertMany(obj, opts)
 
-    fun updateById(id: ObjectId, update: Bson) = mongoCollection.updateOne(Persistent::_id eq id, update)
-    fun updateOne(filter: Bson, update: Bson) = mongoCollection.updateOne(filter, update)
+    fun updateById(id: ObjectId, update: Bson) =
+            mongoCollection.findOneAndUpdate(Persistent::_id eq id, update,
+                    FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER))
+    fun updateOne(filter: Bson, update: Bson) =
+            mongoCollection.findOneAndUpdate(filter, update,
+            FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER))
     fun updateMany(filter: Bson, update: Bson) = mongoCollection.updateMany(filter, update)
 
     fun replaceById(id: ObjectId, obj: T) = mongoCollection.replaceOne(Persistent::_id eq id, obj)

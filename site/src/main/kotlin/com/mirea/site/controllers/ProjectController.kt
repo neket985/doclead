@@ -6,6 +6,7 @@ import com.mirea.common.getPrincipal
 import com.mirea.mongo.Page
 import com.mirea.mongo.dao.ProjectDao
 import com.mirea.mongo.entity.Project
+import com.mirea.mongo.entity.User
 import com.mirea.site.common.SiteURLS
 import com.mirea.site.common.kodein
 import com.mirea.site.common.render
@@ -19,8 +20,9 @@ import io.ktor.routing.get
 import io.ktor.routing.post
 import io.ktor.util.getOrFail
 import org.kodein.di.generic.instance
-import org.litote.kmongo.contains
 import org.litote.kmongo.descending
+import org.litote.kmongo.div
+import org.litote.kmongo.eq
 import java.time.Instant
 import java.util.*
 
@@ -34,7 +36,7 @@ object ProjectController {
             val p = context.parameters["page"]?.toInt() ?: 0
             val page = projectDao.page(
                     Page(p, 10, descending(Project::createdAt)),
-                    Project::authors contains user.toUserEmbedded()
+                    Project::authors / User.UserEmbedded::_id eq user.id
             )
 
             context.render("home", "page" to page)
@@ -46,7 +48,8 @@ object ProjectController {
             val user = context.getPrincipal()
 
             val projectUid = context.parameters["uid"] ?: WebError.webError(400, "Parameter uid required")
-            val project = projectDao.getByUid(projectUid, user.toUserEmbedded()) ?: WebError.webError(404, "Project not founded")
+            val project = projectDao.getByUid(projectUid, user.toUserEmbedded())
+                    ?: WebError.webError(404, "Project not founded")
 
             context.render("project-detail", "project" to project)
         }
@@ -68,7 +71,7 @@ object ProjectController {
                             form.description,
                             Instant.now(),
                             user.toUserEmbedded(),
-                            listOf(user.toUserEmbedded()),
+                            setOf(user.toUserEmbedded()),
                             false,
                             UUID.randomUUID().toString()
                     )

@@ -8,7 +8,7 @@ class Project(
         val description: String?,
         val createdAt: Instant,
         val creator: User.UserEmbedded,
-        val authors: List<User.UserEmbedded>, // в авторов должен входить и создатель
+        val authors: Set<User.UserEmbedded>, // в авторов должен входить и создатель
         val accessByLink: Boolean,//показывать всем, у кого есть ссылка если true
         val accessUid: String,
 //        val versions: Set<String>, todo нужен ли параметр

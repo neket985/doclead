@@ -17,12 +17,16 @@
                     <td>
                         <label>Почта</label>
                         <br>
+                        <label>Логин</label>
+                        <br>
                         <label>Пароль</label>
                         <br>
                         <label>Пароль повторно</label>
                     </td>
                     <td>
                         <input name="email" type="text" required>
+                        <br>
+                        <input name="name" type="text" required>
                         <br>
                         <input name="password" type="password" required>
                         <br>

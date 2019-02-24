@@ -2,7 +2,6 @@
 
 {% block col_head %}
     <link rel="stylesheet" href="/css/project-add.css">
-    <script src="/js/project-add.js"></script>
 {% endblock %}
 
 {% block left_icons %}

@@ -22,6 +22,7 @@ object JwtCommon {
     fun genJWT(user: UserPrincipal): String {
         return JWT.create()
                 .withIssuer(issuer)
+                .withClaim("email", user.email)
                 .withClaim("name", user.name)
                 .withClaim("id", user.id.toHexString())
                 .withExpiresAt(Date.from(Instant.now().plusSeconds(expSecs)))
@@ -35,12 +36,14 @@ object JwtCommon {
     fun Payload.toPrincipal() =
             UserPrincipal(
                     this.getClaim("name").asString(),
+                    this.getClaim("email").asString(),
                     ObjectId(this.getClaim("id").asString())
             )
 
     fun Map<String, Claim>.toPrincipal() =
             UserPrincipal(
                     this["name"]!!.asString(),
+                    this["email"]!!.asString(),
                     ObjectId(this["id"]!!.asString())
             )
 

@@ -21,12 +21,12 @@
             <table>
                 <tr>
                     <td>
-                        <label>Почта</label>
+                        <label>Логин</label>
                         <br>
                         <label>Пароль</label>
                     </td>
                     <td>
-                        <input name="email" type="text" required>
+                        <input name="name" type="text" required>
                         <br>
                         <input name="password" type="password" required>
                     </td>

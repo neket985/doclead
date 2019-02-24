@@ -1,12 +1,9 @@
 package com.mirea.site.controllers
 
+import com.mirea.common.UserPrincipal
 import com.mirea.mongo.dao.UserDao
 import com.mirea.mongo.entity.User
-import com.mirea.common.UserPrincipal
-import com.mirea.site.common.EmailSender
-import com.mirea.site.common.SiteURLS
-import com.mirea.site.common.kodein
-import com.mirea.site.common.render
+import com.mirea.site.common.*
 import io.ktor.auth.authenticate
 import io.ktor.auth.principal
 import io.ktor.request.receiveParameters
@@ -27,7 +24,7 @@ object LoginController {
 
     val login: Route.() -> Unit = {
         get("") {
-            if (context.principal<UserPrincipal>() != null) {
+            if (context.getPrincipalFromSession() != null) {
                 context.respondRedirect(SiteURLS.homeUrl())
             } else {
                 context.render("login")
@@ -51,21 +48,25 @@ object LoginController {
         post("") {
             val params = context.receiveParameters()
             val email = params["email"]
+            val name = params["name"]
             val password = params["password"]
             val passwordConfirm = params["password_confirm"]
 
-            val user = email?.let { userDao.getConfirmedByEmail(it) }
+            val userByEmail = email?.let { userDao.getByEmail(it) }
+            val userByName = name?.let { userDao.getByName(it) }
 
             if (password != passwordConfirm) {
                 context.render("register", "error_msg" to "Пароли не совпадают")
-            } else if (email == null || password == null) {
+            } else if (email == null || name == null || password == null) {
                 context.render("register", "error_msg" to "Логин или пароль некорректны")
-            } else if (user != null) {
+            } else if (userByEmail != null) {
                 context.render("register", "error_msg" to "Пользователь с таким email уже существует")
+            } else if (userByName != null) {
+                context.render("register", "error_msg" to "Пользователь с таким именем уже существует")
             } else {
                 val hashPW = BCrypt.hashpw(password, BCrypt.gensalt())
                 val uuidForConfirm = UUID.randomUUID().toString()
-                val toInsert = User(email, hashPW, false, uuidForConfirm, Instant.now())
+                val toInsert = User(email, name, hashPW, false, uuidForConfirm, Instant.now())
                 userDao.insert(toInsert)
 
                 EmailSender.send(

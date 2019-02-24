@@ -6,7 +6,8 @@ import org.bson.types.ObjectId
 
 data class UserPrincipal(
         val name: String,
+        val email: String,
         val id: ObjectId
 ) : Principal {
-    fun toUserEmbedded() = User.UserEmbedded(name, id)
+    fun toUserEmbedded() = User.UserEmbedded(name, email, id)
 }

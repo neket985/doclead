@@ -1,8 +1,8 @@
 {% extends 'common/left-col.pebble' %}
 
 {% block col_head %}
-    <link rel="stylesheet" href="/css/project-add.css">
-    <script src="/js/document-add.js"></script>
+    <link rel="stylesheet" href="/css/project-detail.css">
+    <script src="/js/project-detail.js"></script>
 {% endblock %}
 
 {% block left_icons %}
@@ -10,10 +10,51 @@
     <a class="center" href="{{ URLS.documentAddUrl(project) }}"><img class="icon" src="/img/plus_icon.png"></a>
 {% endblock %}
 
-{% block col_title %}qq{% endblock %}
-
 {% block col_body %}
+    {% set isCreator = principal.id == project.creator._id %}
+
     <div class="root">
-        {{ project }}
+        <h2>{{ project.title }}</h2>
+        {% if project.description %}
+            <p class="project-desc">{{ project.description }}</p>
+        {% endif %}
+        <div>Создатель: {{ project.creator.name }}</div>
+        <div>Авторы:</div>
+        {% for author in project.authors %}
+            <div class="author-item">
+                <li class="author-name">{{ author.name }}
+                    {% if isCreator %}
+                        <span class="close author-remove" data-name="{{ author.name }}">&#215;</span>
+                    {% endif %}
+                </li>
+            </div>
+        {% endfor %}
+
+        {% if isCreator %}
+            <div class="author-item">
+                <a href="#add" class="author-item">добавить</a>
+            </div>
+        {% endif %}
+
+            <label class="switch">
+                <input type="checkbox" id="access-toggle"
+                       name="access-toggle"{% if project.accessByLink %} checked{% endif %}
+                        {% if not isCreator %} disabled{% endif %}>
+                <span class="slider round"></span>
+            </label>
+
+        <div class="label-accesed{% if not project.accessByLink %} inactive{% endif %}">Доступен всем, у кого есть
+            ссылка
+        </div>
+        <div class="label-unaccesed{% if project.accessByLink %} inactive{% endif %}">Доступен только авторам</div>
+    </div>
+
+    <div id="add" class="modalbackground">
+        <div class="modalwindow">
+            <a href="" class="close author-remove" data-name="{{ author.name }}">&#215;</a>
+            <label>Введите логин пользователя</label>
+            <input type="text" id="author-name" placeholder="Логин">
+            <a class="button" id="author-add">Добавить</a>
+        </div>
     </div>
 {% endblock %}

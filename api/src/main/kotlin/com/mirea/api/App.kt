@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.JsonDeserializer
 import com.fasterxml.jackson.databind.JsonSerializer
 import com.fasterxml.jackson.databind.SerializerProvider
 import com.fasterxml.jackson.databind.module.SimpleModule
+import com.mirea.api.controllers.ProjectController
 import com.mirea.common.ApiError
 import com.mirea.common.ApiError.Companion.apiError
 import com.mirea.common.JwtCommon
@@ -17,14 +18,18 @@ import io.ktor.application.install
 import io.ktor.auth.Authentication
 import io.ktor.auth.authenticate
 import io.ktor.auth.jwt.jwt
-import io.ktor.features.ContentNegotiation
-import io.ktor.features.StatusPages
+import io.ktor.features.*
+import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.jackson.jackson
 import io.ktor.response.respond
 import io.ktor.routing.get
+import io.ktor.routing.post
+import io.ktor.routing.route
 import io.ktor.routing.routing
 import org.bson.types.ObjectId
+import java.time.Duration
 import javax.naming.AuthenticationException
 
 object App {
@@ -37,6 +42,14 @@ object App {
                     credential.payload.toPrincipal()
                 }
             }
+        }
+
+        install(CORS)
+        {
+            method(HttpMethod.Options)
+            header(HttpHeaders.XForwardedProto)
+            header(HttpHeaders.Authorization)
+            anyHost()
         }
 
         install(ContentNegotiation) {
@@ -68,9 +81,7 @@ object App {
 
         routing {
             authenticate {
-                get("") {
-                    call.respond(call.request.headers)
-                }
+                route("project", ProjectController.route)
             }
         }
         install(StatusPages) {
