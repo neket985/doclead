@@ -22,8 +22,11 @@ object SiteURLS {
 
     fun projectAddUrl() = "/project/add"
 
-    fun projectDetailUrl(project: Project) = projectDetailUrl(project.accessUid)
     fun projectDetailUrl(uid: String) = "/project/$uid"
+    fun projectDetailUrl(project: Project) = projectDetailUrl(project.accessUid)
+
+    fun projectBranchesUrl(uid: String) = "/project/$uid/branches"
+    fun projectBranchesUrl(project: Project) = projectBranchesUrl(project.accessUid)
 
     fun documentDetailUrl(uid: String, branch: String) = "/project/$uid/document/v$branch"
     fun documentDetailUrl(project: Project) = documentDetailUrl(project.accessUid, project.currentBranch)

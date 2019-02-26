@@ -55,6 +55,7 @@ object App {
                 route("project") {
                     route("{uid}") {
                         route("", ProjectController.detail)
+                        route("branches", ProjectController.branches)
                         route("document") {
                             route("v{branch}") { //начинается с v, что бы не было путаницы с аналогичными запросами без указания версии
                                 route("", DocumentController.detail)

@@ -1,0 +1,16 @@
+{% extends 'common/left-col.pebble' %}
+
+{% block col_head %}
+    <link rel="stylesheet" href="/css/project-branches.css">
+    <script src="/js/project-branches.js"></script>
+{% endblock %}
+
+{% block top_icons %}
+    <a class="center" href="{{ URLS.projectDetailUrl(project) }}"><img class="icon" src="/img/project_icon.png"></a>
+{% endblock %}
+
+{% block col_body %}
+    <div class="root">
+
+    </div>
+{% endblock %}

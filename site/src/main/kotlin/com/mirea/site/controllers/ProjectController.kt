@@ -55,6 +55,18 @@ object ProjectController {
         }
     }
 
+    val branches: Route.() -> Unit = {
+        get("") {
+            val user = context.getPrincipal()
+
+            val projectUid = context.parameters["uid"] ?: WebError.webError(400, "Parameter uid required")
+            val project = projectDao.getByUid(projectUid, user.toUserEmbedded())
+                    ?: WebError.webError(404, "Project not founded")
+
+            context.render("project-branches", "project" to project)
+        }
+    }
+
     val projectAdd: Route.() -> Unit = {
         get("") {
             context.render("project-add")

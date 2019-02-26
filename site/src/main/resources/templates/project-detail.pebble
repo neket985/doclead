@@ -8,7 +8,7 @@
 {% block top_icons %}
     <a class="center" href="{{ URLS.homeUrl() }}"><img class="icon" src="/img/home_icon.png"></a>
     <a class="center" href="{{ URLS.documentDetailUrl(project) }}"><img class="icon" src="/img/document_icon.png"></a>
-    <a class="center" href="{{ URLS }}"><img class="icon" src="/img/branch_icon.png"></a>
+    <a class="center" href="{{ URLS.projectBranchesUrl(project) }}"><img class="icon" src="/img/branch_icon.png"></a>
 {% endblock %}
 
 {% block col_body %}
