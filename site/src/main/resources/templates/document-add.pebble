@@ -5,20 +5,32 @@
     <script src="/js/document-add.js"></script>
 {% endblock %}
 
-{% block left_icons %}
+{% block top_icons %}
     <a class="center" href="{{ URLS.projectDetailUrl(project) }}"><img class="icon" src="/img/project_icon.png"></a>
+    <a class="center" href="{{ URLS.documentDetailUrl(project.accessUid, branch) }}"><img class="icon"
+                                                                                          src="/img/document_icon.png"></a>
+
 {% endblock %}
 
-{% block col_title %}Добавление документа{% endblock %}
+{% block col_title %}Загрузка документа{% endblock %}
 
 {% block col_body %}
     <div class="root">
-        <form action="{{ URLS.documentAddUrl(project) }}" method="post" enctype="multipart/form-data"
+        <form action="{{ URLS.documentAddUrl(project.accessUid, branch) }}" method="post" enctype="multipart/form-data"
               id="document_form">
-            <label>Описание</label>
+            <label>Описание изменений</label>
             <textarea name="description" form="document_form" placeholder="Ваше описание"></textarea>
-            <label>Версия</label>
-            <input name="version" value="{{ lastVersion }}">
+            <label>Ветка</label>
+            <div>
+                <select name="branch" class="branch inline">
+                    {% for br in project.branches %}
+                        <option{% if branch==br %} selected{% endif %} value="{{ br }}">{{ br }}</option>
+                    {% endfor %}
+                </select>
+                <div class="author-item">
+                    <a href="#add" class="add-item">добавить</a>
+                </div>
+            </div>
             <div class="label-line">
                 <label class="label-for-unchecked">Документ Swagger</label>
                 <label class="switch">
@@ -31,5 +43,14 @@
             <br>
             <button type="submit">Отправить</button>
         </form>
+    </div>
+
+    <div id="add" class="modalbackground">
+        <div class="modalwindow">
+            <a href="" class="close" data-name="{{ author.name }}">&#215;</a>
+            <label>Введите название новой ветки</label>
+            <input type="text" id="branch-name" placeholder="master">
+            <a class="button" id="branch-add">Добавить</a>
+        </div>
     </div>
 {% endblock %}

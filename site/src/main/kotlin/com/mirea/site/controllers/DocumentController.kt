@@ -5,10 +5,7 @@ import com.mirea.common.getPrincipal
 import com.mirea.mongo.dao.DocumentDao
 import com.mirea.mongo.dao.ProjectDao
 import com.mirea.mongo.entity.Document
-import com.mirea.site.common.SiteURLS
-import com.mirea.site.common.copyToSuspend
-import com.mirea.site.common.kodein
-import com.mirea.site.common.render
+import com.mirea.site.common.*
 import com.typesafe.config.ConfigFactory
 import io.ktor.application.call
 import io.ktor.http.content.PartData
@@ -19,25 +16,73 @@ import io.ktor.response.respondRedirect
 import io.ktor.routing.Route
 import io.ktor.routing.get
 import io.ktor.routing.post
+import io.ktor.util.error
+import org.bson.types.ObjectId
 import org.kodein.di.generic.instance
+import org.slf4j.LoggerFactory
+import java.io.BufferedReader
 import java.io.File
+import java.io.IOException
+import java.io.InputStreamReader
 import java.time.Instant
+
 
 object DocumentController {
     private val projectDao by kodein.instance<ProjectDao>()
     private val documentDao by kodein.instance<DocumentDao>()
     private val baseDir = ConfigFactory.load().getString("documentsDirectory")
+    private const val convertScript = "/Users/nikitos/IdeaProjects/doclead/site/src/main/resources/openapi-html"
 
     val detail: Route.() -> Unit = {
         get("") {
             val user = context.getPrincipal()
 
-            val projectUid = context.parameters["uid"] ?: webError(400, "Parameter uid required")
+            val projectUid = context.paramReq("uid")
             val project = projectDao.getByUid(projectUid, user.toUserEmbedded()) ?: webError(404, "Project not founded")
 
-            val newestDocument = documentDao.getNewest(project._id!!)
+            val branch = context.paramReq("branch")
+            val document = documentDao.getByBranch(project._id!!, branch)
+                    ?: context.respondRedirect(SiteURLS.documentAddUrl(project.accessUid, branch))
 
-            context.render("document-detail", "project" to project, "document" to newestDocument)
+            context.render("document-detail", "project" to project, "document" to document)
+        }
+    }
+
+    val docHtml: Route.() -> Unit = {
+        get("") {
+            val user = context.getPrincipal()
+
+            val projectUid = context.paramReq("uid")
+            val project = projectDao.getByUid(projectUid, user.toUserEmbedded()) ?: webError(404, "Project not founded")
+
+            val branch = context.paramReq("branch")
+            val document = documentDao.getByBranch(project._id!!, branch)
+                    ?: webError(404, "Document not founded")
+
+            val html = File(getDocsPath(user.id, project._id!!, document.branch), "index.html")
+
+            if (!html.exists()) webError(500, "Html file not founded")
+
+            context.render(html)
+        }
+    }
+
+    val getFile: Route.() -> Unit = {
+        get("") {
+            val user = context.getPrincipal()
+
+            val projectUid = context.paramReq("uid")
+            val project = projectDao.getByUid(projectUid, user.toUserEmbedded()) ?: webError(404, "Project not founded")
+
+            val branch = context.paramReq("branch")
+            val document = documentDao.getByBranch(project._id!!, branch)
+                    ?: webError(404, "Document not founded")
+
+            val file = File(getDocsPath(user.id, project._id!!, document.branch), document.filename)
+
+            if (!file.exists()) webError(500, "File not founded")
+
+            context.respondFile(file)
         }
     }
 
@@ -45,37 +90,46 @@ object DocumentController {
         get("") {
             val user = context.getPrincipal()
 
-            val projectUid = context.parameters["uid"] ?: webError(400, "Parameter uid required")
+            val projectUid = context.paramReq("uid")
             val project = projectDao.getByUid(projectUid, user.toUserEmbedded()) ?: webError(404, "Project not founded")
 
-            val lastVersion = documentDao.getNewest(project._id!!) ?: initVersion
-            context.render("document-add", "project" to project, "lastVersion" to lastVersion)
+            val branch = context.paramReq("branch")
+            context.render("document-add", "project" to project, "branch" to branch)
         }
 
         post("") {
             val user = context.getPrincipal()
 
-            val projectUid = context.parameters["uid"] ?: webError(400, "Parameter uid required")
+            val projectUid = context.paramReq("uid")
             val project = projectDao.getByUid(projectUid, user.toUserEmbedded()) ?: webError(404, "Project not founded")
 
             var docFile: File? = null
             var isPostmanCollection = false
             var description: String? = null
-            var version: String? = null
+            var branch: String? = null
 
             val multipart = call.receiveMultipart()
             multipart.forEachPart { part ->
                 when (part) {
                     is PartData.FileItem -> {
                         val ext = File(part.originalFileName).extension
-                        //todo проверять на наличие нужного расширения файла
+                        //todo валидировать файл openapi
 
-                        val documentPath = File("$baseDir/${user.id}/${project._id}", initVersion)
+                        if (branch == null) webError(400, "Parameter branch required")
+
+                        val documentPath = getDocsPath(user.id, project._id!!, branch!!)
                         if (!documentPath.exists()) {
+                            documentPath.mkdirs()
+                        } else {
+                            documentPath.deleteRecursively()
                             documentPath.mkdirs()
                         }
                         val file = File(documentPath, "${part.originalFileName}")
-                        part.streamProvider().use { input -> file.outputStream().buffered().use { output -> input.copyToSuspend(output) } }
+                        part.streamProvider().use { input ->
+                            file.outputStream().buffered().use { output ->
+                                input.copyToSuspend(output)
+                            }
+                        }
                         docFile = file
                     }
                     is PartData.FormItem -> {
@@ -85,7 +139,7 @@ object DocumentController {
                                 if (it.isBlank()) null
                                 else it
                             }
-                            "version" -> version = part.value
+                            "branch" -> branch = part.value
                         }
                     }
                 }
@@ -93,25 +147,56 @@ object DocumentController {
                 part.dispose()
             }
 
-            if (version == null) webError(400, "Parameter version required")
+            val document = docFile?.let {
+                execCmd("$convertScript ${docFile!!.parent} ${docFile!!.name}")
 
-            if (docFile != null) {
                 documentDao.insert(
                         Document(
                                 project._id!!,
                                 Instant.now(),
                                 user.toUserEmbedded(),
-                                version!!,
+                                branch!!,
                                 description,
-                                docFile!!.name,
+                                it.name,
                                 false //todo
                         )
                 )
-            }
+            } //todo ?: error
 
-            context.respondRedirect(SiteURLS.homeUrl())
+            context.respondRedirect(SiteURLS.documentDetailUrl(project, document))
         }
     }
 
-    private val initVersion = "0"
+    private fun getDocsPath(userId: ObjectId, projectId: ObjectId, branch: String) =
+            File("$baseDir/$userId/$projectId", branch)
+
+    private fun execCmd(cmd: String) =
+            try {
+                val process = Runtime.getRuntime().exec(cmd)
+
+                val output = StringBuilder()
+
+                val reader = BufferedReader(InputStreamReader(process.inputStream))
+
+                var line = reader.readLine()
+                while (line != null) {
+                    line = reader.readLine()
+                    output.appendln(line)
+                }
+
+                val exitVal = process.waitFor()
+                if (exitVal == 0) {
+                    logger.debug("Success!")
+                    logger.debug(output.toString())
+                } else {
+                    logger.error("abnormal... to exec commands $cmd")
+                }
+
+            } catch (e: IOException) {
+                logger.error(e)
+            } catch (e: InterruptedException) {
+                logger.error(e)
+            }
+
+    private val logger = LoggerFactory.getLogger(DocumentController::class.java)
 }

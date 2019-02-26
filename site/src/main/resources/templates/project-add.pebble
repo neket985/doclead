@@ -4,7 +4,7 @@
     <link rel="stylesheet" href="/css/project-add.css">
 {% endblock %}
 
-{% block left_icons %}
+{% block top_icons %}
     <a class="center" href="{{ URLS.homeUrl() }}"><img class="icon" src="/img/home_icon.png"></a>
 {% endblock %}
 
@@ -15,6 +15,8 @@
         <form action="{{ URLS.projectAddUrl() }}" method="post" enctype="application/x-www-form-urlencoded" id="project_form">
             <label>Заголовок</label>
             <input type="text" name="title" placeholder="Ваш заголовок">
+            <label>Основная ветка</label>
+            <input type="text" name="branch" value="master">
             <label>Описание</label>
             <textarea name="description" form="project_form" placeholder="Ваше описание"></textarea>
             <br>

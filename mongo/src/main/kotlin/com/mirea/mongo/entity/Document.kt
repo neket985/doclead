@@ -7,7 +7,7 @@ class Document(
         val project: ObjectId,
         val createdAt: Instant,
         val author: User.UserEmbedded,
-        val version: String,
+        val branch: String,
         val description: String?, //описание изменений/создания для удобства при просмотре истории изменений
         val filename: String, //местоположение документа в файловой системе сервера (относительно директории, указанной в конфиге)
         val isOpenApi: Boolean, //валидировать перед сохранением

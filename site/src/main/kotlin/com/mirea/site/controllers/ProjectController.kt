@@ -73,7 +73,9 @@ object ProjectController {
                             user.toUserEmbedded(),
                             setOf(user.toUserEmbedded()),
                             false,
-                            UUID.randomUUID().toString()
+                            UUID.randomUUID().toString(),
+                            form.branch,
+                            setOf(form.branch)
                     )
             )
 
@@ -83,11 +85,13 @@ object ProjectController {
 
     data class AddForm(
             val title: String,
+            val branch: String,
             val description: String?
     )
 
     private fun Parameters.toAddForm() = AddForm(
             this.getOrFail("title"),
+            this.getOrFail("branch"),
             if (this.contains("description"))
                 this.getOrFail("description").let {
                     if (it.isBlank()) null

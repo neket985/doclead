@@ -5,7 +5,7 @@
     <link rel="stylesheet" href="/css/project-item.css">
 {% endblock %}
 
-{% block left_icons %}
+{% block top_icons %}
     <a class="center" href="{{ URLS.projectAddUrl() }}"><img class="icon" src="/img/plus_icon.png"></a>
 {% endblock %}
 

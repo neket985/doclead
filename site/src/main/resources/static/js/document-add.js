@@ -18,5 +18,14 @@ document.addEventListener("DOMContentLoaded", function (evt) {
                 labelForDeative.classList.add("inactive")
             }
         }, 400);
-    })
+    });
+
+    $('#branch-add').on('click', function (e) {
+        var name = $('#branch-name')[0].value;
+        var path = location.pathname.replace('/project/', '');
+        var uid = path.substr(0, path.indexOf('/'));
+        apiPost("/project/branch/add", {name: name, projectUid: uid}, function (data) {
+            location.href = ""
+        })
+    });
 });

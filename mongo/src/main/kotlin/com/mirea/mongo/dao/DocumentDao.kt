@@ -10,7 +10,13 @@ import org.litote.kmongo.eq
 class DocumentDao(mongoDb: MongoDatabase) : CommonDao<Document>(mongoDb, Document::class) {
     fun getNewest(projectId: ObjectId) =
             find(Document::project eq projectId)
-                    .sort(descending(Project::createdAt))
+                    .sort(descending(Document::createdAt))
+                    .limit(1)
+                    .firstOrNull()
+
+    fun getByBranch(projectId: ObjectId, branch: String) =
+            find(Document::project eq projectId, Document::branch eq branch)
+                    .sort(descending(Document::createdAt))
                     .limit(1)
                     .firstOrNull()
 }

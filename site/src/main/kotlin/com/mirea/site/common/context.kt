@@ -5,6 +5,7 @@ import com.mirea.common.JwtCommon
 import com.mirea.common.JwtCommon.toPrincipal
 import com.mirea.common.JwtSession
 import com.mirea.common.UserPrincipal
+import com.mirea.common.WebError.Companion.webError
 import com.mirea.site.pebble.PebbleModule.render
 import com.mitchellbosecke.pebble.PebbleEngine
 import io.ktor.application.ApplicationCall
@@ -12,6 +13,8 @@ import io.ktor.auth.authentication
 import io.ktor.auth.principal
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
+import io.ktor.response.header
+import io.ktor.response.respondBytes
 import io.ktor.response.respondText
 import io.ktor.sessions.get
 import io.ktor.sessions.sessions
@@ -21,13 +24,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.yield
 import org.kodein.di.generic.instance
+import java.io.File
 import java.io.InputStream
 import java.io.OutputStream
+import java.nio.file.Files
 
 private val engine by kodein.instance<PebbleEngine>()
 
 suspend fun ApplicationCall.render(template: String, vararg params: Pair<String, Any?>) =
-        this.respondText(ContentType.parse("text/html"), HttpStatusCode.OK) {
+        this.respondText(ContentType.Text.Html, HttpStatusCode.OK) {
             val queryParams = this.request.queryParameters.toMap().map {
                 it.key to it.value.firstOrNull()
             }
@@ -40,6 +45,18 @@ suspend fun ApplicationCall.render(template: String, vararg params: Pair<String,
             engine.render(template, *allParams)
         }
 
+suspend fun ApplicationCall.render(file: File) =
+        this.respondBytes(ContentType.Text.Html, HttpStatusCode.OK) {
+            Files.readAllBytes(file.toPath())
+        }
+
+suspend fun ApplicationCall.respondFile(file: File) {
+    this.response.header("Content-Disposition", "attachment; filename=\"${file.name}\"")
+    this.respondBytes(ContentType.Application.OctetStream, HttpStatusCode.OK) {
+        Files.readAllBytes(file.toPath())
+    }
+}
+
 fun ApplicationCall.getPrincipalFromSession() =
         this.sessions.get<JwtSession>()?.let {
             try {
@@ -50,6 +67,9 @@ fun ApplicationCall.getPrincipalFromSession() =
                 null
             }
         }
+
+fun ApplicationCall.paramReq(str: String) =
+        this.parameters[str] ?: webError(400, "Parameter $str required")
 
 
 suspend fun InputStream.copyToSuspend(

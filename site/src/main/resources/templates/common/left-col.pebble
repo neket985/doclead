@@ -8,9 +8,10 @@
 {% block body %}
     <div class="left-col">
         <div>
-            {% block left_icons %}{% endblock %}
+            {% block top_icons %}{% endblock %}
         </div>
         <div class="bottom">
+            {% block bottom_icons %}{% endblock %}
             <a class="center" href="{{ URLS.projectAddUrl() }}"><img class="icon" src="/img/wheel_icon.png"></a>
         </div>
     </div>

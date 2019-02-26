@@ -1,6 +1,6 @@
 package com.mirea.api
 
-data class AuthorAddRemove(
+data class ParamAddRemove(
         val name: String,
         val projectUid: String
 )

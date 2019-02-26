@@ -1,20 +1,22 @@
 {% extends 'common/left-col.pebble' %}
 
 {% block col_head %}
-    <link rel="stylesheet" href="/css/project-add.css">
-    <script src="/js/document-add.js"></script>
+    <link rel="stylesheet" href="/css/document-detail.css">
 {% endblock %}
 
-{% block left_icons %}
+{% block top_icons %}
     <a class="center" href="{{ URLS.projectDetailUrl(project) }}"><img class="icon" src="/img/project_icon.png"></a>
-    <a class="center" href="{{ URLS.documentAddUrl(project) }}"><img class="icon" src="/img/plus_icon.png"></a>
+    <a class="center" href="{{ URLS.documentAddUrl(project, document) }}"><img class="icon" src="/img/edit_icon.png"></a>
+    <a class="center" href="{{ URLS.documentDownloadUrl(project, document) }}"><img class="icon" src="/img/download_icon.png"></a>
+
 {% endblock %}
 
-{% block col_title %}qq{% endblock %}
+{% block bottom_icons %}
+    <div class="branch center"><b>V</b>:{{ document.branch | abbreviate(15) }}</div>
+{% endblock %}
 
 {% block col_body %}
     <div class="root">
-{{ project }}
-{{ document }}
+        <iframe src="{{ URLS.documentHtmlUrl(project, document) }}"></iframe>
     </div>
 {% endblock %}

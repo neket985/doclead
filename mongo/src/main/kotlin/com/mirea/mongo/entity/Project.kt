@@ -11,6 +11,7 @@ class Project(
         val authors: Set<User.UserEmbedded>, // в авторов должен входить и создатель
         val accessByLink: Boolean,//показывать всем, у кого есть ссылка если true
         val accessUid: String,
-//        val versions: Set<String>, todo нужен ли параметр
+        val currentBranch: String,
+        val branches: Set<String>,
         override var _id: ObjectId? = null
 ) : Persistent

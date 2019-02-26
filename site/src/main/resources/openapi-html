@@ -1,0 +1,15 @@
+#!/bin/bash
+# что бы сделать файл исполняемым воспользуйтесь командой "chmod +x ./openapi-html"
+
+env=$1
+filename=$2
+
+cd $env
+
+mkdir html
+
+bootprint openapi $filename html
+
+html-inline html/index.html > index.html
+
+rm -rf html

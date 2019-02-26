@@ -1,6 +1,6 @@
 package com.mirea.api.controllers
 
-import com.mirea.api.AuthorAddRemove
+import com.mirea.api.ParamAddRemove
 import com.mirea.api.ProjectUid
 import com.mirea.api.kodein
 import com.mirea.common.ApiError.Companion.apiError
@@ -29,12 +29,13 @@ object ProjectController {
             post("remove", authorRemove)
             post("add", authorAdd)
         }
+        post("branch/add", branchAdd)
         post("access/toggle", accessByLinkToggle)
     }
 
     val authorRemove: suspend PipelineContext<Unit, ApplicationCall>.(Unit) -> Unit = {
         api {
-            val authorAdd = context.receive<AuthorAddRemove>()
+            val authorAdd = context.receive<ParamAddRemove>()
 
             val author = userDao.getConfirmedByName(authorAdd.name)?.toUserEmbedded()
                     ?: apiError(404, "User not founded")
@@ -53,7 +54,7 @@ object ProjectController {
 
     val authorAdd: suspend PipelineContext<Unit, ApplicationCall>.(Unit) -> Unit = {
         api {
-            val authorAdd = context.receive<AuthorAddRemove>()
+            val authorAdd = context.receive<ParamAddRemove>()
 
             val author = userDao.getConfirmedByName(authorAdd.name)?.toUserEmbedded()
                     ?: apiError(404, "User not founded")
@@ -67,6 +68,18 @@ object ProjectController {
             else {
                 projectDao.updateById(project._id!!, addToSet(Project::authors, author))
             }
+        }
+    }
+
+    val branchAdd: suspend PipelineContext<Unit, ApplicationCall>.(Unit) -> Unit = {
+        api {
+            val branchAdd = context.receive<ParamAddRemove>()
+
+            val principal = context.getPrincipal()
+            val project = projectDao.getByUid(branchAdd.projectUid, principal.toUserEmbedded())
+                    ?: apiError(404, "Project not founded")
+
+            projectDao.updateById(project._id!!, addToSet(Project::branches, branchAdd.name))
         }
     }
 

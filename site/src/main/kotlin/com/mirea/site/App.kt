@@ -56,8 +56,15 @@ object App {
                     route("{uid}") {
                         route("", ProjectController.detail)
                         route("document") {
+                            route("v{branch}") { //начинается с v, что бы не было путаницы с аналогичными запросами без указания версии
+                                route("", DocumentController.detail)
+                                route("add", DocumentController.documentAdd)
+                                route("html", DocumentController.docHtml)
+                                route("download", DocumentController.getFile)
+                            }
                             route("", DocumentController.detail)
                             route("add", DocumentController.documentAdd)
+                            route("download", DocumentController.getFile)
                         }
                     }
                     route("add", ProjectController.projectAdd)

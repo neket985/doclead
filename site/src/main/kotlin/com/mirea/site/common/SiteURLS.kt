@@ -1,7 +1,7 @@
 package com.mirea.site.common
 
+import com.mirea.mongo.entity.Document
 import com.mirea.mongo.entity.Project
-import org.bson.types.ObjectId
 
 object SiteURLS {
     fun loginUrl() = "/login"
@@ -22,12 +22,30 @@ object SiteURLS {
 
     fun projectAddUrl() = "/project/add"
 
-    fun projectDetailUrl(uid: String) = "/project/$uid"
     fun projectDetailUrl(project: Project) = projectDetailUrl(project.accessUid)
+    fun projectDetailUrl(uid: String) = "/project/$uid"
 
-    fun documentDetailUrl(uid: String) = "/project/$uid/document"
-    fun documentDetailUrl(project: Project) = documentDetailUrl(project.accessUid)
+    fun documentDetailUrl(uid: String, branch: String) = "/project/$uid/document/v$branch"
+    fun documentDetailUrl(project: Project) = documentDetailUrl(project.accessUid, project.currentBranch)
+    fun documentDetailUrl(project: Project, document: Document?) =
+            documentDetailUrl(project.accessUid, document?.branch ?: project.currentBranch)
 
-    fun documentAddUrl(uid: String) = "/project/$uid/document/add"
-    fun documentAddUrl(project: Project) = documentAddUrl(project.accessUid)
+
+    fun documentHtmlUrl(uid: String, branch: String) = "/project/$uid/document/v$branch/html"
+    fun documentHtmlUrl(project: Project) = documentHtmlUrl(project.accessUid, project.currentBranch)
+    fun documentHtmlUrl(project: Project, document: Document?) =
+            documentHtmlUrl(project.accessUid, document?.branch ?: project.currentBranch)
+
+
+    fun documentAddUrl(uid: String, branch: String) = "/project/$uid/document/v$branch/add"
+    fun documentAddUrl(project: Project) = documentAddUrl(project.accessUid, project.currentBranch)
+    fun documentAddUrl(project: Project, document: Document?) =
+            documentAddUrl(project.accessUid, document?.branch ?: project.currentBranch)
+
+
+    fun documentDownloadUrl(uid: String, branch: String) = "/project/$uid/document/v$branch/download"
+    fun documentDownloadUrl(project: Project) = documentDownloadUrl(project.accessUid, project.currentBranch)
+    fun documentDownloadUrl(project: Project, document: Document?) =
+            documentDownloadUrl(project.accessUid, document?.branch ?: project.currentBranch)
+
 }
