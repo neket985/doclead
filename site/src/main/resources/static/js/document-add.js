@@ -4,19 +4,15 @@ document.addEventListener("DOMContentLoaded", function (evt) {
             var labelForAtivate;
             var labelForDeative;
             if (e.target.checked) {
-                labelForAtivate = $('.label-for-checked')[0];
-                labelForDeative = $('.label-for-unchecked')[0];
+                labelForAtivate = $('.for-checked');
+                labelForDeative = $('.for-unchecked');
             } else {
-                labelForAtivate = $('.label-for-unchecked')[0];
-                labelForDeative = $('.label-for-checked')[0];
+                labelForAtivate = $('.for-unchecked');
+                labelForDeative = $('.for-checked');
             }
 
-            if (labelForAtivate.classList.contains("inactive")) {
-                labelForAtivate.classList.remove("inactive")
-            }
-            if (!labelForDeative.classList.contains("inactive")) {
-                labelForDeative.classList.add("inactive")
-            }
+            labelForAtivate.removeClass("inactive");
+            labelForDeative.addClass("inactive");
         }, 400);
     });
 

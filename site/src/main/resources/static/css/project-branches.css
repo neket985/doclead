@@ -1,5 +1,76 @@
 .root {
     padding-left: 40px;
     padding-top: 20px;
+    display: flex;
+    flex-wrap: wrap;
 }
 
+.branch-item h2 {
+    margin-top: 20px;
+}
+
+.branch-item {
+    border: 1px solid;
+    color: #686868;
+    font-size: 14px;
+    border-radius: 10px;
+    min-width: 300px;
+    max-width: 600px;
+    min-height: 300px;
+    margin-right: 20px;
+    margin-bottom: 20px;
+    cursor: pointer;
+    position: relative;
+}
+
+.branch-item:hover {
+    color: black;
+}
+
+.version-items {
+    padding-left: 30px;
+    position: relative;
+}
+
+.date {
+    font-size: 8px;
+    color: gray;
+}
+
+span.point-version {
+    position: absolute;
+    top: 0px;
+    border-radius: 5px;
+    width: 10px;
+    height: 10px;
+    border: 5px solid;
+}
+
+.left {
+    position: absolute;
+    height: 10px;
+}
+
+.right {
+    margin-left: 18px;
+}
+
+.line {
+    border: 1px solid;
+    width: 0px;
+    position: absolute;
+    top: 5px;
+    height: 100%;
+    left: 34px;
+}
+
+.tag {
+    position: absolute;
+    left: 10px;
+    top: 5px;
+    border: 1px solid;
+    padding: 0px 10px;
+    border-radius: 5px;
+    color: #7b20a7;
+    font-size: 12px;
+}

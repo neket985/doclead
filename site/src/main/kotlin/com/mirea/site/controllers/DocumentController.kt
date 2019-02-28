@@ -5,6 +5,7 @@ import com.mirea.common.getPrincipal
 import com.mirea.mongo.dao.DocumentDao
 import com.mirea.mongo.dao.ProjectDao
 import com.mirea.mongo.entity.Document
+import com.mirea.mongo.entity.User
 import com.mirea.site.common.*
 import com.typesafe.config.ConfigFactory
 import io.ktor.application.call
@@ -31,7 +32,9 @@ object DocumentController {
     private val projectDao by kodein.instance<ProjectDao>()
     private val documentDao by kodein.instance<DocumentDao>()
     private val baseDir = ConfigFactory.load().getString("documentsDirectory")
-    private const val convertScript = "/Users/nikitos/IdeaProjects/doclead/site/src/main/resources/openapi-html"
+    private val cfg = ConfigFactory.load()
+    private val openApiToHtmlScript = cfg.getString("openApiToHtml")
+    private val postmanToOpenApiScript = cfg.getString("postmanToOpenApi")
 
     val detail: Route.() -> Unit = {
         get("") {
@@ -105,6 +108,7 @@ object DocumentController {
 
             var docFile: File? = null
             var isPostmanCollection = false
+            var postmanLink: String? = null
             var description: String? = null
             var branch: String? = null
 
@@ -112,25 +116,26 @@ object DocumentController {
             multipart.forEachPart { part ->
                 when (part) {
                     is PartData.FileItem -> {
-                        val ext = File(part.originalFileName).extension
-                        //todo валидировать файл openapi
+                        if(part.originalFileName?.isNotBlank() == true) {
+                            val ext = File(part.originalFileName).extension
+                            //todo валидировать файл openapi
 
-                        if (branch == null) webError(400, "Parameter branch required")
-
-                        val documentPath = getDocsPath(user.id, project._id!!, branch!!)
-                        if (!documentPath.exists()) {
-                            documentPath.mkdirs()
-                        } else {
-                            documentPath.deleteRecursively()
-                            documentPath.mkdirs()
-                        }
-                        val file = File(documentPath, "${part.originalFileName}")
-                        part.streamProvider().use { input ->
-                            file.outputStream().buffered().use { output ->
-                                input.copyToSuspend(output)
+                            if (branch == null) webError(400, "Parameter branch required")
+                            val documentPath = getDocsPath(user.id, project._id!!, branch!!)
+                            if (!documentPath.exists()) {
+                                documentPath.mkdirs()
+                            } else {
+                                documentPath.deleteRecursively()
+                                documentPath.mkdirs()
                             }
+                            val file = File(documentPath, "${part.originalFileName}")
+                            part.streamProvider().use { input ->
+                                file.outputStream().buffered().use { output ->
+                                    input.copyToSuspend(output)
+                                }
+                            }
+                            docFile = file
                         }
-                        docFile = file
                     }
                     is PartData.FormItem -> {
                         when (part.name) {
@@ -140,6 +145,7 @@ object DocumentController {
                                 else it
                             }
                             "branch" -> branch = part.value
+                            "postmanLink" -> postmanLink = part.value
                         }
                     }
                 }
@@ -147,28 +153,42 @@ object DocumentController {
                 part.dispose()
             }
 
-            val document = docFile?.let {
-                execCmd("$convertScript ${docFile!!.parent} ${docFile!!.name}")
 
-                documentDao.insert(
-                        Document(
-                                project._id!!,
-                                Instant.now(),
-                                user.toUserEmbedded(),
-                                branch!!,
-                                description,
-                                it.name,
-                                false //todo
-                        )
-                )
-            } //todo ?: error
+            val document = docFile?.let { file ->
+                writeDocument(file, project._id!!, user.toUserEmbedded(), branch!!, description)
+            } ?: postmanLink?.let { url ->
+                val file = File(getDocsPath(user.id, project._id!!, branch!!), "$projectUid.yaml")
+                postmanToOpenApi(url, file)
+                writeDocument(file, project._id!!, user.toUserEmbedded(), branch!!, description)
+            }//todo error
 
             context.respondRedirect(SiteURLS.documentDetailUrl(project, document))
         }
     }
 
+    private fun writeDocument(file: File, projectId: ObjectId, user: User.UserEmbedded, branch: String, description: String?): Document {
+        openApiToHtml(file)
+
+        return documentDao.insert(
+                Document(
+                        projectId,
+                        Instant.now(),
+                        user,
+                        branch,
+                        description,
+                        file.name
+                )
+        )
+    }
+
     private fun getDocsPath(userId: ObjectId, projectId: ObjectId, branch: String) =
             File("$baseDir/$userId/$projectId", branch)
+
+    private fun openApiToHtml(file: File) =
+            execCmd("$openApiToHtmlScript ${file.parent} ${file.name}")
+
+    private fun postmanToOpenApi(postmanUrl: String, writeTo: File) =
+            execCmd("$postmanToOpenApiScript $postmanUrl ${writeTo.absolutePath}")
 
     private fun execCmd(cmd: String) =
             try {

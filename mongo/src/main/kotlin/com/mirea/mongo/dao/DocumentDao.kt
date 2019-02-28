@@ -19,4 +19,12 @@ class DocumentDao(mongoDb: MongoDatabase) : CommonDao<Document>(mongoDb, Documen
                     .sort(descending(Document::createdAt))
                     .limit(1)
                     .firstOrNull()
+
+    fun findByBranch(projectId: ObjectId, branch: String) =
+            find(Document::project eq projectId, Document::branch eq branch)
+                    .sort(descending(Document::createdAt))
+
+    fun findByProject(projectId: ObjectId) =
+            find(Document::project eq projectId)
+                    .sort(descending(Document::createdAt))
 }

@@ -19,6 +19,10 @@ label.inactive {
     color: rgba(0, 0, 0, 0.3);
 }
 
+input.inactive {
+    display: none;
+}
+
 form {
     margin-left: 20px;
     margin-top: 20px;

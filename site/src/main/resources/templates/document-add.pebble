@@ -28,18 +28,19 @@
                     {% endfor %}
                 </select>
                 <div class="author-item">
-                    <a href="#add" class="add-item">добавить</a>
+                    <a href="#add" class="add-item">новая ветка</a>
                 </div>
             </div>
             <div class="label-line">
-                <label class="label-for-unchecked">Документ Swagger</label>
+                <label class="for-unchecked">Документ Swagger</label>
                 <label class="switch">
                     <input type="checkbox" id="doc-toggle" name="doc-toggle">
                     <span class="slider round"></span>
                 </label>
-                <label class="label-for-checked inactive">Коллекция Postman</label>
+                <label class="for-checked inactive">Коллекция Postman</label>
             </div>
-            <input name="file" type="file">
+            <input class="for-checked inactive" name="postmanLink" type="text" placeholder="Postman collection link">
+            <input class="for-unchecked" name="file" type="file">
             <br>
             <button type="submit">Отправить</button>
         </form>

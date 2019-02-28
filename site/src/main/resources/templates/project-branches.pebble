@@ -7,10 +7,17 @@
 
 {% block top_icons %}
     <a class="center" href="{{ URLS.projectDetailUrl(project) }}"><img class="icon" src="/img/project_icon.png"></a>
+    <a class="center" href="{{ URLS.documentDetailUrl(project) }}">
+        <img class="icon" src="/img/document_icon.png">
+    </a>
+
 {% endblock %}
 
 {% block col_body %}
     <div class="root">
-
+        {% for branch in project.branches %}
+            {% set documents = docsByBranches[branch] %}
+            {% include "component/branch-item.pebble" %}
+        {% endfor %}
     </div>
 {% endblock %}

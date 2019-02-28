@@ -30,6 +30,7 @@ object ProjectController {
             post("add", authorAdd)
         }
         post("branch/add", branchAdd)
+        post("branch/checkout", branchCheckout)
         post("access/toggle", accessByLinkToggle)
     }
 
@@ -80,6 +81,21 @@ object ProjectController {
                     ?: apiError(404, "Project not founded")
 
             projectDao.updateById(project._id!!, addToSet(Project::branches, branchAdd.name))
+        }
+    }
+
+    val branchCheckout: suspend PipelineContext<Unit, ApplicationCall>.(Unit) -> Unit = {
+        api {
+            val branch = context.receive<ParamAddRemove>()
+
+            val principal = context.getPrincipal()
+            val project = projectDao.getByUid(branch.projectUid, principal.toUserEmbedded())
+                    ?: apiError(404, "Project not founded")
+
+            if (!project.branches.contains(branch.name)) apiError(400, "Branch not founded")
+            else if (project.currentBranch == branch.name) apiError(400, "Branch is checked out")
+
+            projectDao.updateById(project._id!!, set(Project::currentBranch, branch.name))
         }
     }
 

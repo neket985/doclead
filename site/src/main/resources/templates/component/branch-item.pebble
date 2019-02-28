@@ -1,0 +1,25 @@
+<div class="branch-item{% if project.currentBranch == branch %} checked{% endif %}" data-name="{{ branch }}">
+    {% if project.currentBranch == branch %}
+        <span class="tag">current</span>
+    {% endif %}
+    <h2 class="center">{{ branch }}</h2>
+    <div class="version-items">
+        <div class="line"></div>
+        {% for document in documents %}
+            <div class="version-item">
+                <div class="left">
+                    <span class="point-version"></span>
+                </div>
+                <div class="right">
+                    <div class="date">
+                        {{ document.createdAt | datetime("dd.MM.yyyy HH:mm") }}
+                        - {{ document.author.name }}
+                    </div>
+                    <p class="doc-desc">{{ document.description }}</p>
+                </div>
+            </div>
+        {% else %}
+            Нет документов
+        {% endfor %}
+    </div>
+</div>
