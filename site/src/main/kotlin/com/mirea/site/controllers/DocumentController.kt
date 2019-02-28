@@ -157,7 +157,14 @@ object DocumentController {
             val document = docFile?.let { file ->
                 writeDocument(file, project._id!!, user.toUserEmbedded(), branch!!, description)
             } ?: postmanLink?.let { url ->
-                val file = File(getDocsPath(user.id, project._id!!, branch!!), "$projectUid.yaml")
+                val documentPath = getDocsPath(user.id, project._id!!, branch!!)
+                if (!documentPath.exists()) {
+                    documentPath.mkdirs()
+                } else {
+                    documentPath.deleteRecursively()
+                    documentPath.mkdirs()
+                }
+                val file = File(documentPath, "$projectUid.yaml")
                 postmanToOpenApi(url, file)
                 writeDocument(file, project._id!!, user.toUserEmbedded(), branch!!, description)
             }//todo error

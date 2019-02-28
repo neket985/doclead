@@ -45,4 +45,12 @@ document.addEventListener("DOMContentLoaded", function (evt) {
             location.href = ""
         })
     });
+
+    $('#author-name').on("keyup", function(e) {
+        console.log(e);
+        if (e.keyCode === 13) {
+            e.preventDefault();
+            $('#author-add').click();
+        }
+    });
 });

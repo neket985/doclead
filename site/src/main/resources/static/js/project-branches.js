@@ -25,12 +25,11 @@ function cutLineHeight() {
 }
 
 function getParentByClass(e, clazz) {
-    var parent = e.parentNode;
-    if (parent === null || parent === undefined) {
+    if (e === null || e === undefined) {
         return null;
-    }else if(parent.classList.contains(clazz)){
-        return parent;
+    }else if(e.classList.contains(clazz)){
+        return e;
     }else{
-        return getParentByClass(parent, clazz);
+        return getParentByClass(e.parentNode, clazz);
     }
 }

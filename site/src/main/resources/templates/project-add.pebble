@@ -14,9 +14,9 @@
     <div class="root">
         <form action="{{ URLS.projectAddUrl() }}" method="post" enctype="application/x-www-form-urlencoded" id="project_form">
             <label>Заголовок</label>
-            <input type="text" name="title" placeholder="Ваш заголовок">
+            <input type="text" name="title" placeholder="Ваш заголовок" required>
             <label>Основная ветка</label>
-            <input type="text" name="branch" value="master">
+            <input type="text" name="branch" value="master" required>
             <label>Описание</label>
             <textarea name="description" form="project_form" placeholder="Ваше описание"></textarea>
             <br>

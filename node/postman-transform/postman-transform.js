@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+//https://github.com/stoplightio/api-spec-converter
+
 var collection = process.argv[2];
 var writeTo = process.argv[3];
 

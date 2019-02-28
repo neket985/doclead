@@ -24,4 +24,13 @@ document.addEventListener("DOMContentLoaded", function (evt) {
             location.href = ""
         })
     });
+
+
+    $('#branch-name').on("keyup", function(e) {
+        console.log(e);
+        if (e.keyCode === 13) {
+            e.preventDefault();
+            $('#branch-add').click();
+        }
+    });
 });
