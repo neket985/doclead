@@ -48,6 +48,7 @@ object App {
             }
 
             route("login", LoginController.login)
+            route("logout", LoginController.logout)
             route("register", LoginController.register)
 
             authenticate {

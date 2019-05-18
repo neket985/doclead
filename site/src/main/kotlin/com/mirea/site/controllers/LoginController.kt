@@ -1,5 +1,6 @@
 package com.mirea.site.controllers
 
+import com.mirea.common.JwtSession
 import com.mirea.common.UserPrincipal
 import com.mirea.mongo.dao.UserDao
 import com.mirea.mongo.entity.User
@@ -11,6 +12,8 @@ import io.ktor.response.respondRedirect
 import io.ktor.routing.Route
 import io.ktor.routing.get
 import io.ktor.routing.post
+import io.ktor.sessions.clear
+import io.ktor.sessions.sessions
 import org.kodein.di.generic.instance
 import org.litote.kmongo.and
 import org.litote.kmongo.eq
@@ -34,6 +37,13 @@ object LoginController {
             post("") {
                 context.respondRedirect(SiteURLS.homeUrl())
             }
+        }
+    }
+
+    val logout: Route.() -> Unit = {
+        get("") {
+            context.sessions.clear<JwtSession>()
+            context.respondRedirect(SiteURLS.loginUrl())
         }
     }
 

@@ -4,6 +4,7 @@ import com.mirea.mongo.entity.Document
 import com.mirea.mongo.entity.Project
 
 object SiteURLS {
+    fun logoutUrl() = "/logout"
     fun loginUrl() = "/login"
     fun loginUrl(msgForConfirm: Boolean = false, emailConfirm: Boolean = false, loginError: Boolean = false): String {
         val queryParams = listOf(
