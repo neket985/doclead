@@ -42,6 +42,9 @@ abstract class CommonDao<T : Persistent>(mongoDb: MongoDatabase, clazz: KClass<T
     fun replaceById(id: ObjectId, obj: T) = mongoCollection.replaceOne(Persistent::_id eq id, obj)
     fun replaceOne(filter: Bson, obj: T) = mongoCollection.replaceOne(filter, obj)
 
+    fun deleteById(id: ObjectId) = mongoCollection.deleteOne(Persistent::_id eq id)
+    fun deleteOne(filter: Bson) = mongoCollection.deleteOne(filter)
+
     fun page(page: Page, filter: Bson = EMPTY_BSON): Pageable<T> {
         val total = mongoCollection.countDocuments(filter)
         val content = mongoCollection.find(filter)

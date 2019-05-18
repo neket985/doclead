@@ -39,3 +39,13 @@ function getCookie(name) {
     ));
     return matches ? decodeURIComponent(matches[1]) : undefined;
 }
+
+function getParentByClass(e, clazz) {
+    if (e === null || e === undefined) {
+        return null;
+    }else if(e.classList.contains(clazz)){
+        return e;
+    }else{
+        return getParentByClass(e.parentNode, clazz);
+    }
+}

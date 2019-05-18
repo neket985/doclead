@@ -25,6 +25,7 @@ object ProjectController {
     private val projectDao by kodein.instance<ProjectDao>()
 
     val route: Route.() -> Unit = {
+        post("remove", projectRemove)
         route("author") {
             post("remove", authorRemove)
             post("add", authorAdd)
@@ -32,6 +33,20 @@ object ProjectController {
         post("branch/add", branchAdd)
         post("branch/checkout", branchCheckout)
         post("access/toggle", accessByLinkToggle)
+    }
+
+    val projectRemove: suspend PipelineContext<Unit, ApplicationCall>.(Unit) -> Unit = {
+        api {
+            val uid = context.receive<ProjectUid>().uid
+
+            val principal = context.getPrincipal()
+            val project = projectDao.getByUid(uid, principal.toUserEmbedded())
+                    ?: apiError(404, "Project not founded")
+
+            if (project.creator._id != principal.id) apiError(403, "Creator only can remove project")
+
+            projectDao.deleteById(project._id!!)
+        }
     }
 
     val authorRemove: suspend PipelineContext<Unit, ApplicationCall>.(Unit) -> Unit = {

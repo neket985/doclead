@@ -3,6 +3,7 @@
 {% block col_head %}
     <link rel="stylesheet" href="/css/home.css">
     <link rel="stylesheet" href="/css/project-item.css">
+    <script src="/js/home.js"></script>
 {% endblock %}
 
 {% block top_icons %}
