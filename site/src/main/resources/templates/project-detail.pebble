@@ -42,15 +42,17 @@
             </div>
         {% endif %}
 
+        {% if isCreator %}
             <label class="switch">
                 <input type="checkbox" id="access-toggle"
-                       name="access-toggle"{% if project.accessByLink %} checked{% endif %}
-                        {% if not isCreator %} disabled{% endif %}>
+                       name="access-toggle"{% if project.accessByLink %} checked{% endif %}>
                 <span class="slider round"></span>
             </label>
+        {% endif %}
 
         <div class="label-accesed{% if not project.accessByLink %} inactive{% endif %}">Доступен всем, у кого есть
-            ссылка
+            ссылка<br>
+            <a href="{{ URLS.documentHtmlUrl(project) }}">Ссылка</a>
         </div>
         <div class="label-unaccesed{% if project.accessByLink %} inactive{% endif %}">Доступен только авторам</div>
     </div>

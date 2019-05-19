@@ -1,5 +1,6 @@
 package com.mirea.site.controllers
 
+import com.mirea.common.UserPrincipal
 import com.mirea.common.WebError.Companion.webError
 import com.mirea.common.getPrincipal
 import com.mirea.mongo.dao.DocumentDao
@@ -9,6 +10,7 @@ import com.mirea.mongo.entity.User
 import com.mirea.site.common.*
 import com.typesafe.config.ConfigFactory
 import io.ktor.application.call
+import io.ktor.auth.principal
 import io.ktor.http.content.PartData
 import io.ktor.http.content.forEachPart
 import io.ktor.http.content.streamProvider
@@ -53,16 +55,16 @@ object DocumentController {
 
     val docHtml: Route.() -> Unit = {
         get("") {
-            val user = context.getPrincipal()
+            val user = context.principal<UserPrincipal>()
 
             val projectUid = context.paramReq("uid")
-            val project = projectDao.getByUid(projectUid, user.toUserEmbedded()) ?: webError(404, "Project not founded")
+            val project = projectDao.getByUid(projectUid, user?.toUserEmbedded()) ?: webError(404, "Project not founded")
 
             val branch = context.paramReq("branch")
             val document = documentDao.getByBranch(project._id!!, branch)
                     ?: webError(404, "Document not founded")
 
-            val html = File(getDocsPath(user.id, project._id!!, document.branch), "index.html")
+            val html = File(getDocsPath(project.creator._id, project._id!!, document.branch), "index.html")
 
             if (!html.exists()) webError(500, "Html file not founded")
 
@@ -81,7 +83,7 @@ object DocumentController {
             val document = documentDao.getByBranch(project._id!!, branch)
                     ?: webError(404, "Document not founded")
 
-            val file = File(getDocsPath(user.id, project._id!!, document.branch), document.filename)
+            val file = File(getDocsPath(project.creator._id, project._id!!, document.branch), document.filename)
 
             if (!file.exists()) webError(500, "File not founded")
 
@@ -121,7 +123,7 @@ object DocumentController {
                             //todo валидировать файл openapi
 
                             if (branch == null) webError(400, "Parameter branch required")
-                            val documentPath = getDocsPath(user.id, project._id!!, branch!!)
+                            val documentPath = getDocsPath(project.creator._id, project._id!!, branch!!)
                             if (!documentPath.exists()) {
                                 documentPath.mkdirs()
                             } else {
@@ -157,7 +159,7 @@ object DocumentController {
             val document = docFile?.let { file ->
                 writeDocument(file, project._id!!, user.toUserEmbedded(), branch!!, description)
             } ?: postmanLink?.let { url ->
-                val documentPath = getDocsPath(user.id, project._id!!, branch!!)
+                val documentPath = getDocsPath(project.creator._id, project._id!!, branch!!)
                 if (!documentPath.exists()) {
                     documentPath.mkdirs()
                 } else {

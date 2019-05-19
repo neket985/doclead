@@ -1,5 +1,6 @@
 document.addEventListener("DOMContentLoaded", function (evt) {
     $('#access-toggle').on('change', function (e) {
+        console.log(1);
         var uid = location.pathname.replace('/project/', '');
         apiPost("/project/access/toggle", {uid: uid}, function (data) {
             var datachecked = data.accessByLink;
