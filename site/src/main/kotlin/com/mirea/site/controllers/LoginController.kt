@@ -5,6 +5,7 @@ import com.mirea.common.UserPrincipal
 import com.mirea.mongo.dao.UserDao
 import com.mirea.mongo.entity.User
 import com.mirea.site.common.*
+import com.typesafe.config.ConfigFactory
 import io.ktor.auth.authenticate
 import io.ktor.auth.principal
 import io.ktor.request.receiveParameters
@@ -99,5 +100,7 @@ object LoginController {
 
     private const val registrationTitle = "Завершение регистрации"
     private const val registrationText = "Для завершения регистрации перейдите по ссылке "
-    private fun confirmLink(uuid: String) = "http://0.0.0.0:8080${SiteURLS.confirmEmailUrl(uuid)}"
+    private val config = ConfigFactory.load()
+    private val baseUrl = config.getString("baseUrl")
+    private fun confirmLink(uuid: String) = "$baseUrl${SiteURLS.confirmEmailUrl(uuid)}"
 }
