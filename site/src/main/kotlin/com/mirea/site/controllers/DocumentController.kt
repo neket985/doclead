@@ -55,6 +55,7 @@ object DocumentController {
 
     val docHtml: Route.() -> Unit = {
         get("") {
+            context.getPrincipalFromSession()
             val user = context.principal<UserPrincipal>()
 
             val projectUid = context.paramReq("uid")
