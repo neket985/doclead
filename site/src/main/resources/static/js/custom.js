@@ -1,3 +1,5 @@
+var apiBaseUrl = "http://62.113.227.21:8081";
+
 function redirect(str) {
     window.location = str;
 }
@@ -5,7 +7,7 @@ function redirect(str) {
 function apiPost(url, data, success) {
     return $.ajax({
         type: "POST",
-        url: "http://0.0.0.0:8081" + url,
+        url: apiBaseUrl + url,
         data: JSON.stringify(data),
         beforeSend: function (xhr) {
             xhr.setRequestHeader("Authorization", "Bearer " + getJwtFromSession());
@@ -19,7 +21,7 @@ function apiPost(url, data, success) {
 function apiGet(url, success) {
     $.ajax({
         type: "GET",
-        url: "http://0.0.0.0:8081" + url,
+        url: apiBaseUrl + url,
         beforeSend: function (xhr) {
             xhr.setRequestHeader("Authorization", "Bearer " + getJwtFromSession());
         },
@@ -43,9 +45,9 @@ function getCookie(name) {
 function getParentByClass(e, clazz) {
     if (e === null || e === undefined) {
         return null;
-    }else if(e.classList.contains(clazz)){
+    } else if (e.classList.contains(clazz)) {
         return e;
-    }else{
+    } else {
         return getParentByClass(e.parentNode, clazz);
     }
 }
