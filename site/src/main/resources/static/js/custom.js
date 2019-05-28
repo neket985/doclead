@@ -1,4 +1,4 @@
-var apiBaseUrl = "http://62.113.227.21:8081";
+var apiBaseUrl = "http://0.0.0.0:8081";
 
 function redirect(str) {
     window.location = str;

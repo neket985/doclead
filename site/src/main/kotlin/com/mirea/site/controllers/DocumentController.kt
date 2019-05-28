@@ -45,7 +45,7 @@ object DocumentController {
             val projectUid = context.paramReq("uid")
             val project = projectDao.getByUid(projectUid, user.toUserEmbedded()) ?: webError(404, "Project not founded")
 
-            val branch = context.paramReq("branch")
+            val branch = context.parameters["branch"] ?: project.currentBranch
             val document = documentDao.getByBranch(project._id!!, branch)
                     ?: context.respondRedirect(SiteURLS.documentAddUrl(project.accessUid, branch))
 
